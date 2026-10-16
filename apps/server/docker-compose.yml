@@ -1,0 +1,19 @@
+# Local PostgreSQL for the Ceyora API: `docker compose up -d`
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ceyora-postgres
+    environment:
+      POSTGRES_USER: ceyora
+      POSTGRES_PASSWORD: ceyora
+      POSTGRES_DB: ceyora
+    ports:
+      - "5433:5432"
+    volumes:
+      - ceyora-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ceyora"]
+      interval: 5s
+      retries: 10
+volumes:
+  ceyora-pgdata:

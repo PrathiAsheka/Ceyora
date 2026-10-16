@@ -1,0 +1,18 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Deploy to production server"
+          # Add your deployment commands here
+          # e.g., SSH into server and run deploy script

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  test-api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: ceyora_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          cd apps/api
+          pip install -r requirements.txt
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/ceyora_test
+        run: |
+          cd apps/api
+          alembic upgrade head
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/ceyora_test
+          JWT_SECRET_KEY: test-secret-key
+        run: |
+          cd apps/api
+          pytest

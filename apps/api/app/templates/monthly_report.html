@@ -1,0 +1,58 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<h1>Monthly Management Report - {{ month }}</h1>
+<p>Institute: {{ institute_name }}</p>
+<p>Report Period: {{ month }}</p>
+
+<h2>Executive Summary</h2>
+<div class="kpi-grid">
+    <div class="kpi">
+        <div class="kpi-value">{{ total_students }}</div>
+        <div class="kpi-label">Total Students</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-value">LKR {{ monthly_revenue | number_format }}</div>
+        <div class="kpi-label">Monthly Revenue</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-value">{{ collection_rate }}%</div>
+        <div class="kpi-label">Collection Rate</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-value">{{ attendance_rate }}%</div>
+        <div class="kpi-label">Attendance Rate</div>
+    </div>
+</div>
+
+<h2>Financial Performance</h2>
+<table>
+    <tr><th>Metric</th><th>Amount</th></tr>
+    <tr><td>Expected Revenue</td><td>LKR {{ expected_revenue | number_format }}</td></tr>
+    <tr><td>Collected</td><td>LKR {{ collected | number_format }}</td></tr>
+    <tr><td>Outstanding</td><td>LKR {{ outstanding | number_format }}</td></tr>
+    <tr><td>Total Expenses</td><td>LKR {{ total_expenses | number_format }}</td></tr>
+    <tr><td>Net Income</td><td>LKR {{ net_income | number_format }}</td></tr>
+</table>
+
+<h2>Student Growth & Retention</h2>
+<p>Student enrollment details will be populated with actual data.</p>
+
+<h2>Attendance Analysis</h2>
+<p>Attendance analysis will be populated with actual data.</p>
+
+<h2>Academic Performance</h2>
+<p>Academic metrics will be populated with actual data.</p>
+
+<h2>Important Alerts</h2>
+{% for alert in alerts %}
+<div class="alert alert-{{ alert.severity }}">{{ alert.message }}</div>
+{% endfor %}
+
+<h2>Recommendations</h2>
+{% for rec in recommendations %}
+<div class="alert alert-warning">
+    <strong>{{ rec.issue }}</strong>: {{ rec.action }}
+</div>
+{% endfor %}
+{% endblock %}

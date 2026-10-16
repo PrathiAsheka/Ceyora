@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ceyora-db-prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ceyora
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ceyora-redis-prod
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: ceyora-api-prod
+    restart: always
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ceyora
+      DATABASE_URL_SYNC: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ceyora
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DEBUG: "false"
+      WHATSAPP_ACCESS_TOKEN: ${WHATSAPP_ACCESS_TOKEN}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    container_name: ceyora-web-prod
+    restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,90 @@
+# ============================================
+# Ceyora (EduBI) — .gitignore
+# ============================================
+
+# ---------- Dependencies ----------
+node_modules/
+.pnp
+.pnp.js
+
+# ---------- Next.js ----------
+.next/
+.next-*/
+out/
+
+# ---------- Build Output ----------
+dist/
+build/
+.turbo/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.venv/
+env/
+ENV/
+
+# ---------- Database ----------
+*.db
+*.sqlite
+*.sqlite3
+
+# ---------- Environment ----------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Testing ----------
+coverage/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+
+# ---------- Docker ----------
+docker-compose.override.yml
+
+# ---------- Logs ----------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- Misc ----------
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
