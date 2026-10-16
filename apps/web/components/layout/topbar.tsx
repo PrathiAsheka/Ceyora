@@ -31,6 +31,7 @@ import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { soundEngine } from "@/lib/sound";
 
 const branches = [
   { id: "colombo", name: "Apex Academy - Colombo 07", code: "CMB-01", students: "1,240 Enrolled" },
@@ -272,7 +273,10 @@ export function Topbar() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => {
+              try { soundEngine.playClick(); } catch {}
+              setTheme(theme === "dark" ? "light" : "dark");
+            }}
             className="rounded-xl p-2 hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-colors"
           >
             <AnimatePresence mode="wait" initial={false}>

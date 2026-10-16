@@ -29,7 +29,7 @@ declare module "express-serve-static-core" {
   }
 }
 
-const PUBLIC = [/^\/health$/, /^\/auth\/(status|setup|login|redeem)$/];
+const PUBLIC = [/^\/health$/, /^\/auth\/(status|setup|login|redeem)$/, /^\/payments\/payhere\/notify$/];
 
 /** Sessions are touched at most this often (ms), to avoid a write per request. */
 const TOUCH_INTERVAL = 5 * 60_000;
@@ -107,6 +107,12 @@ const ROUTE_RULES: Rule[] = [
   ["GET", /^\/academic\/summary$/, ["academic.manage", "reports.view"]],
   ["GET", /^\/(exams|exam-results|topics)$/, ["academic.manage", "reports.view"]],
   ["*", /^\/(exams|topics)/, ["academic.manage"]],
+
+  ["POST", /^\/payments\/payhere\/notify$/, "signed-in"],
+  ["POST", /^\/payments\/payhere\/checkout-hash$/, ["fees.collect", "fees.view"]],
+  ["POST", /^\/payments\/[^/]+\/reverse$/, ["fees.collect", "settings.manage"]],
+  ["GET", /^\/compliance\//, ["settings.manage", "reports.view"]],
+  ["POST", /^\/import\/batch$/, ["students.manage", "institutes.manage"]],
 
   // Everyone can see and raise support tickets for their institute.
   ["GET", /^\/tickets$/, "signed-in"],
