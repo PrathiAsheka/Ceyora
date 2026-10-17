@@ -23,8 +23,11 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockTeachers, mockClasses, TeacherData } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useInstituteStore } from "@/stores/institute-store";
 
 export default function TeachersPage() {
+  const { selectedInstituteId, selectedInstitute } = useInstituteStore();
   const [teachers, setTeachers] = useState<TeacherData[]>(mockTeachers);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -40,12 +43,16 @@ export default function TeachersPage() {
   const [newBank, setNewBank] = useState("Commercial Bank");
   const [newAccount, setNewAccount] = useState("");
 
-  const filteredTeachers = teachers.filter(
-    (t) =>
+  const filteredTeachers = teachers.filter((t) => {
+    const matchesInstitute =
+      selectedInstituteId === "all" ||
+      t.assignedClassIds.some((cid) => mockClasses.some((c) => c.id === cid && c.instituteId === selectedInstituteId));
+    const matchesSearch =
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.subjects.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      t.nic.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      t.nic.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesInstitute && matchesSearch;
+  });
 
   const handleAddTeacher = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +94,9 @@ export default function TeachersPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Teachers" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -96,6 +106,11 @@ export default function TeachersPage() {
               <span className="text-[11px] font-bold text-violet-500 uppercase tracking-widest">
                 Academic Faculty & Compensation Engine
               </span>
+              {selectedInstitute && (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                  {selectedInstitute.city} Branch
+                </span>
+              )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
               Teacher <span className="gradient-text">Directory</span>

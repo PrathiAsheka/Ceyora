@@ -26,6 +26,7 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockInstitutes, mockClasses, mockTeachers } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function InstituteDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -38,29 +39,25 @@ export default function InstituteDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Institutes", href: "/institutes" }, { label: institute.name }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/institutes">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl p-2.5 border border-border/60 hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" />
-              </motion.button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-                  {institute.code}
-                </span>
-                <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Active Campus
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
-                {institute.name}
-              </h1>
-              <p className="text-xs text-muted-foreground">{institute.address}</p>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                {institute.code}
+              </span>
+              <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Active Campus
+              </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
+              {institute.name}
+            </h1>
+            <p className="text-xs text-muted-foreground">{institute.address}</p>
           </div>
 
           <div className="flex items-center gap-2">

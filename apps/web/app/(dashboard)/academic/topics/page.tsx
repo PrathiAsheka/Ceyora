@@ -17,6 +17,9 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockTopicDiagnostics, TopicDiagnosticData } from "@/lib/mock-data";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { academicNavItems } from "@/lib/sub-nav-items";
 
 export default function TopicsPage() {
   const [topics, setTopics] = useState<TopicDiagnosticData[]>(mockTopicDiagnostics);
@@ -36,6 +39,9 @@ export default function TopicsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Academic", href: "/academic" }, { label: "Topic Diagnostics" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -53,6 +59,11 @@ export default function TopicsPage() {
               Pinpoint student comprehension bottlenecks across specific syllabus modules and dispatch targeted worksheets.
             </p>
           </div>
+        </div>
+
+        {/* Academic Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={academicNavItems} />
         </div>
       </AnimatedSection>
 

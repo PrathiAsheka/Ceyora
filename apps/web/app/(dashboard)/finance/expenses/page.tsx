@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { financeNavItems } from "@/lib/sub-nav-items";
 
 interface ExpenseItem {
   id: string;
@@ -112,6 +115,9 @@ export default function ExpensesPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Finance", href: "/finance" }, { label: "Expenses" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -139,6 +145,11 @@ export default function ExpensesPage() {
             <Plus className="h-4 w-4" />
             Record Operational Expense
           </motion.button>
+        </div>
+
+        {/* Finance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={financeNavItems} />
         </div>
       </AnimatedSection>
 

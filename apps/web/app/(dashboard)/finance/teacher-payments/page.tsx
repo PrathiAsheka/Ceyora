@@ -21,6 +21,9 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockTeachers, mockClasses } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { financeNavItems } from "@/lib/sub-nav-items";
 
 export default function TeacherPaymentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,6 +63,9 @@ export default function TeacherPaymentsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Finance", href: "/finance" }, { label: "Faculty Payouts" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -87,6 +93,11 @@ export default function TeacherPaymentsPage() {
             <Printer className="h-4 w-4" />
             Export Bank Advice File
           </motion.button>
+        </div>
+
+        {/* Finance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={financeNavItems} />
         </div>
       </AnimatedSection>
 

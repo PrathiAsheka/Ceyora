@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { settingsNavItems } from "@/lib/sub-nav-items";
 
 export default function LanguagePage() {
   const { locale, setLocale, t } = useI18n();
@@ -51,6 +54,9 @@ export default function LanguagePage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Settings", href: "/settings" }, { label: "Language & Regional" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -87,6 +93,11 @@ export default function LanguagePage() {
               )}
             </motion.button>
           </div>
+        </div>
+
+        {/* Settings Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={settingsNavItems} />
         </div>
       </AnimatedSection>
 

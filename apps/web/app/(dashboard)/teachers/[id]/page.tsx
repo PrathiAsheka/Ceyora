@@ -24,6 +24,7 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockTeachers, mockClasses, mockInstitutes } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function TeacherDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -47,29 +48,25 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Teachers", href: "/teachers" }, { label: teacher.name }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/teachers">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl p-2.5 border border-border/60 hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" />
-              </motion.button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-                  NIC: {teacher.nic}
-                </span>
-                <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                  Verified Faculty
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
-                {teacher.name}
-              </h1>
-              <p className="text-xs text-muted-foreground">{teacher.title}</p>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                NIC: {teacher.nic}
+              </span>
+              <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                Verified Faculty
+              </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
+              {teacher.name}
+            </h1>
+            <p className="text-xs text-muted-foreground">{teacher.title}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -194,16 +191,20 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="space-y-3">
                 {assignedClasses.map((cls) => (
-                  <div
+                  <Link
                     key={cls.id}
-                    className="p-4 rounded-2xl border border-border/40 bg-muted/20 hover:bg-muted/40 transition-colors"
+                    href={`/classes/${cls.id}`}
+                    className="block p-4 rounded-2xl border border-border/40 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all cursor-pointer group"
                   >
                     <div className="flex items-start justify-between">
                       <div>
                         <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
                           {cls.code}
                         </span>
-                        <h4 className="text-xs font-bold text-foreground mt-1">{cls.name}</h4>
+                        <h4 className="text-xs font-bold text-foreground mt-1 group-hover:text-primary transition-colors flex items-center gap-1.5">
+                          {cls.name}
+                          <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </h4>
                         <p className="text-[11px] text-muted-foreground">{cls.hall} • {cls.timeSlot}</p>
                       </div>
                       <div className="text-right">
@@ -228,7 +229,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

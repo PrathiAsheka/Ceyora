@@ -23,8 +23,11 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockClasses, mockTeachers, ClassData } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useInstituteStore } from "@/stores/institute-store";
 
 export default function ClassesPage() {
+  const { selectedInstituteId, selectedInstitute } = useInstituteStore();
   const [classes, setClasses] = useState<ClassData[]>(mockClasses);
   const [searchQuery, setSearchQuery] = useState("");
   const [gradeFilter, setGradeFilter] = useState("all");
@@ -41,12 +44,13 @@ export default function ClassesPage() {
   const [newSlot, setNewSlot] = useState("Saturdays 08:30 AM - 01:00 PM");
 
   const filteredClasses = classes.filter((cls) => {
+    const matchesInstitute = selectedInstituteId === "all" || cls.instituteId === selectedInstituteId;
     const matchesSearch =
       cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       cls.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       cls.subject.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesGrade = gradeFilter === "all" || cls.grade.includes(gradeFilter);
-    return matchesSearch && matchesGrade;
+    return matchesInstitute && matchesSearch && matchesGrade;
   });
 
   const handleCreateClass = (e: React.FormEvent) => {
@@ -89,6 +93,9 @@ export default function ClassesPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Classes" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -98,6 +105,11 @@ export default function ClassesPage() {
               <span className="text-[11px] font-bold text-primary uppercase tracking-widest">
                 Academic Batches & Hall Schedules
               </span>
+              {selectedInstitute && (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                  {selectedInstitute.city} Branch
+                </span>
+              )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
               Class <span className="gradient-text">Directory</span>

@@ -20,6 +20,9 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockExams, mockClasses, mockStudents, ExamData } from "@/lib/mock-data";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { academicNavItems } from "@/lib/sub-nav-items";
 
 export default function ExamsPage() {
   const [exams, setExams] = useState<ExamData[]>(mockExams);
@@ -82,6 +85,9 @@ export default function ExamsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Academic", href: "/academic" }, { label: "Exams & Results" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -130,6 +136,11 @@ export default function ExamsPage() {
               Schedule Exam
             </motion.button>
           </div>
+        </div>
+
+        {/* Academic Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={academicNavItems} />
         </div>
       </AnimatedSection>
 

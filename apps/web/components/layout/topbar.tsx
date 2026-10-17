@@ -32,11 +32,13 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { soundEngine } from "@/lib/sound";
+import { useInstituteStore } from "@/stores/institute-store";
 
 const branches = [
-  { id: "colombo", name: "Apex Academy - Colombo 07", code: "CMB-01", students: "1,240 Enrolled" },
-  { id: "kandy", name: "Apex Academy - Kandy City", code: "KDY-01", students: "890 Enrolled" },
-  { id: "galle", name: "Apex Academy - Galle Fort", code: "GLE-01", students: "620 Enrolled" },
+  { id: "all", name: "All Branches (Consolidated)", code: "APEX-ALL", students: "2,794 Enrolled" },
+  { id: "inst-1", name: "Apex Colombo 07 (Main Campus)", code: "APEX-CMB", students: "1,284 Enrolled" },
+  { id: "inst-2", name: "Apex Science Academy - Kandy", code: "APEX-KDY", students: "890 Enrolled" },
+  { id: "inst-3", name: "Apex Study Center - Galle", code: "APEX-GLE", students: "620 Enrolled" },
 ];
 
 export function Topbar() {
@@ -45,13 +47,14 @@ export function Topbar() {
   const { openMobileSidebar } = useUIStore();
   const { user, logout } = useAuthStore();
   const { locale, setLocale, t } = useI18n();
+  const { selectedInstituteId, setSelectedInstituteId } = useInstituteStore();
 
   const [searchFocused, setSearchFocused] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [branchOpen, setBranchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(branches[0]);
+  const selectedBranch = branches.find((b) => b.id === selectedInstituteId) || branches[0];
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -169,9 +172,10 @@ export function Topbar() {
                       <button
                         key={b.id}
                         onClick={() => {
-                          setSelectedBranch(b);
+                          setSelectedInstituteId(b.id);
                           setBranchOpen(false);
-                          toast.success(`Switched to ${b.name}`);
+                          try { soundEngine.playClick(); } catch {}
+                          toast.success(`Active Institute Scope: ${b.name}`);
                         }}
                         className={cn(
                           "w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition-colors hover:bg-muted/60",

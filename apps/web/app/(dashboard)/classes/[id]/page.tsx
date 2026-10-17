@@ -24,6 +24,7 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockClasses, mockTeachers, mockStudents, mockExams } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -47,33 +48,29 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Classes", href: "/classes" }, { label: classItem.name }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/classes">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl p-2.5 border border-border/60 hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" />
-              </motion.button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-                  {classItem.code}
-                </span>
-                <span className="text-xs font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
-                  {classItem.grade}
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
-                {classItem.name}
-              </h1>
-              <p className="text-xs text-muted-foreground">{classItem.medium} Medium • {classItem.subject}</p>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                {classItem.code}
+              </span>
+              <span className="text-xs font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                {classItem.grade}
+              </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
+              {classItem.name}
+            </h1>
+            <p className="text-xs text-muted-foreground">{classItem.medium} Medium • {classItem.subject}</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <Link href="/attendance/scan">
+            <Link href={`/attendance/scan?classId=${classItem.id}`}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

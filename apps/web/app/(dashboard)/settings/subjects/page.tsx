@@ -18,6 +18,9 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import { mockClasses, mockTeachers, mockStudents } from "@/lib/mock-data";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { settingsNavItems } from "@/lib/sub-nav-items";
 
 interface SubjectItem {
   id: string;
@@ -158,6 +161,9 @@ export default function SubjectsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Settings", href: "/settings" }, { label: "Subjects" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -186,6 +192,11 @@ export default function SubjectsPage() {
               <Plus className="h-4 w-4" /> {t("settings.subjectsPage.addSubject")}
             </motion.button>
           </div>
+        </div>
+
+        {/* Settings Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={settingsNavItems} />
         </div>
       </AnimatedSection>
 

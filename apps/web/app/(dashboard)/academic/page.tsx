@@ -18,6 +18,9 @@ import { AnimatedCounter } from "@/components/animated-counter";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockExams, mockTopicDiagnostics } from "@/lib/mock-data";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { academicNavItems } from "@/lib/sub-nav-items";
 
 export default function AcademicPage() {
   const academicKpis = [
@@ -55,6 +58,9 @@ export default function AcademicPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Academic" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -85,6 +91,11 @@ export default function AcademicPage() {
               </motion.button>
             </Link>
           </div>
+        </div>
+
+        {/* Academic Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={academicNavItems} />
         </div>
       </AnimatedSection>
 

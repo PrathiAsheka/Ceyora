@@ -22,6 +22,7 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockInstitutes, mockClasses, mockTeachers, mockTopicDiagnostics, mockRecommendations } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function ReportPreviewPage() {
   const institute = mockInstitutes[0];
@@ -38,21 +39,19 @@ export default function ReportPreviewPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <div className="print:hidden">
+        <Breadcrumbs items={[{ label: "Reports", href: "/reports" }, { label: "Executive Management Dossier" }]} />
+      </div>
+
       {/* Action Toolbar */}
       <AnimatedSection className="print:hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/reports">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl p-2.5 border border-border/60 hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" />
-              </motion.button>
-            </Link>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-foreground">
-                Monthly Executive Management Dossier
-              </h1>
-              <p className="text-xs text-muted-foreground">Reporting Period: October 2026 • Apex Higher Education Institute</p>
-            </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-foreground">
+              Monthly Executive Management Dossier
+            </h1>
+            <p className="text-xs text-muted-foreground">Reporting Period: October 2026 • Apex Higher Education Institute</p>
           </div>
 
           <div className="flex items-center gap-2">

@@ -22,6 +22,9 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockClasses, mockStudents } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { attendanceNavItems } from "@/lib/sub-nav-items";
 
 export default function AttendancePage() {
   const atRiskStudents = mockStudents.filter((s) => s.attendanceRate < 75);
@@ -34,6 +37,9 @@ export default function AttendancePage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Attendance" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -64,6 +70,11 @@ export default function AttendancePage() {
               </motion.button>
             </Link>
           </div>
+        </div>
+
+        {/* Attendance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={attendanceNavItems} />
         </div>
       </AnimatedSection>
 

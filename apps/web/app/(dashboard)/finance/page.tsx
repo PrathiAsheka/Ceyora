@@ -22,6 +22,8 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { financeNavItems } from "@/lib/sub-nav-items";
 
 export default function FinanceDashboardPage() {
   const { t } = useI18n();
@@ -137,6 +139,11 @@ export default function FinanceDashboardPage() {
               Arrears Follow-up & WhatsApp
             </motion.button>
           </Link>
+        </div>
+
+        {/* Finance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={financeNavItems} />
         </div>
       </AnimatedSection>
 

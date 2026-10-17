@@ -39,6 +39,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useInstituteStore } from "@/stores/institute-store";
 
 const monthlyRevenueData = [
   { month: "Jan", expected: 2800000, collected: 2650000, attendance: 89 },
@@ -52,6 +53,7 @@ const monthlyRevenueData = [
 const liveClasses = [
   {
     id: "cls-1",
+    instituteId: "inst-1",
     name: "A/L Combined Mathematics (Theory)",
     teacher: "Eng. Dilantha Fernando",
     hall: "Hall A - Smart Auditorium",
@@ -62,6 +64,7 @@ const liveClasses = [
   },
   {
     id: "cls-2",
+    instituteId: "inst-1",
     name: "A/L Physics (Revision & Paper)",
     teacher: "Prof. Anura Weerasinghe",
     hall: "Hall B - Science Wing",
@@ -72,6 +75,7 @@ const liveClasses = [
   },
   {
     id: "cls-3",
+    instituteId: "inst-1",
     name: "O/L Science & Technology (English Medium)",
     teacher: "Ms. Rashmi Jayathilake",
     hall: "Hall C - Junior Wing",
@@ -79,6 +83,28 @@ const liveClasses = [
     present: 91,
     status: "upcoming",
     time: "04:45 PM - 06:45 PM",
+  },
+  {
+    id: "cls-6",
+    instituteId: "inst-2",
+    name: "A/L Combined Mathematics (Kandy Branch)",
+    teacher: "Eng. Dilantha Fernando",
+    hall: "Kandy Smart Hall 1",
+    enrolled: 140,
+    present: 133,
+    status: "in_progress",
+    time: "08:30 AM - 01:00 PM",
+  },
+  {
+    id: "cls-8",
+    instituteId: "inst-3",
+    name: "A/L Physics (Galle Fort Campus)",
+    teacher: "Prof. Anura Weerasinghe",
+    hall: "Galle Ocean Hall",
+    enrolled: 125,
+    present: 118,
+    status: "in_progress",
+    time: "08:00 AM - 01:00 PM",
   },
 ];
 
@@ -136,14 +162,19 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function DashboardPage() {
   const { t } = useI18n();
+  const { selectedInstituteId, selectedInstitute } = useInstituteStore();
   const [chartMetric, setChartMetric] = useState<"revenue" | "attendance">("revenue");
   const [isSendingReminders, setIsSendingReminders] = useState(false);
+
+  const totalStudents = selectedInstitute ? selectedInstitute.activeStudents : 1284;
+  const activeClassesCount = selectedInstitute ? selectedInstitute.activeClasses : 28;
+  const monthlyRevenue = selectedInstitute ? selectedInstitute.monthlyRevenue : 3845000;
 
   const kpis = [
     {
       key: "totalStudents",
       title: "Total Enrolled Students",
-      value: 1284,
+      value: totalStudents,
       change: "+14.2% vs last month",
       icon: Users,
       gradient: "from-blue-500 to-cyan-400",
@@ -153,8 +184,8 @@ export default function DashboardPage() {
     {
       key: "activeClasses",
       title: "Active Tuition Classes",
-      value: 28,
-      change: "Across 4 Halls",
+      value: activeClassesCount,
+      change: selectedInstitute ? `${selectedInstitute.city} Campus` : "Across 3 Campuses",
       icon: GraduationCap,
       gradient: "from-emerald-500 to-teal-400",
       glowColor: "shadow-emerald-500/20",
@@ -163,7 +194,7 @@ export default function DashboardPage() {
     {
       key: "monthlyRevenue",
       title: "Monthly Fee Collection",
-      value: 3845000,
+      value: monthlyRevenue,
       prefix: "LKR ",
       change: "+18.5% Net Growth",
       icon: DollarSign,
@@ -199,6 +230,10 @@ export default function DashboardPage() {
     });
   };
 
+  const currentLiveClasses = liveClasses.filter(
+    (cls) => selectedInstituteId === "all" || cls.instituteId === selectedInstituteId
+  );
+
   return (
     <AnimatedPage className="space-y-6">
       {/* Page Header */}
@@ -210,12 +245,19 @@ export default function DashboardPage() {
               <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest">
                 Real-Time Tuition BI
               </span>
+              {selectedInstitute && (
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                  {selectedInstitute.city} Branch
+                </span>
+              )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
               Institute Intelligence <span className="gradient-text">Overview</span>
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Live operations, student attendance metrics, and fee recovery analytics for Apex Academy.
+              {selectedInstitute
+                ? `Live operations, attendance metrics, and fee recovery for ${selectedInstitute.name}.`
+                : "Live operations, student attendance metrics, and fee recovery analytics across all branches."}
             </p>
           </div>
 
@@ -391,21 +433,22 @@ export default function DashboardPage() {
                   <h3 className="text-sm font-bold text-foreground">Live Campus Classes</h3>
                 </div>
                 <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-500">
-                  3 ACTIVE
+                  {currentLiveClasses.length} {selectedInstitute ? selectedInstitute.city.toUpperCase() : "ALL"}
                 </span>
               </div>
 
               <div className="space-y-3">
-                {liveClasses.map((cls) => {
+                {currentLiveClasses.map((cls) => {
                   const percentage = Math.round((cls.present / cls.enrolled) * 100);
                   return (
-                    <div
+                    <Link
                       key={cls.id}
-                      className="rounded-2xl border border-border/50 bg-muted/20 hover:bg-muted/40 p-3.5 transition-colors"
+                      href={`/classes/${cls.id}`}
+                      className="block rounded-2xl border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 p-3.5 transition-all group"
                     >
                       <div className="flex items-start justify-between">
                         <div className="min-w-0 pr-2">
-                          <p className="text-xs font-bold text-foreground truncate">{cls.name}</p>
+                          <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">{cls.name}</p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">{cls.teacher}</p>
                         </div>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
@@ -427,7 +470,7 @@ export default function DashboardPage() {
                           />
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

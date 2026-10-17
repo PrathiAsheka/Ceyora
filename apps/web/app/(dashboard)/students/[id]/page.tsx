@@ -28,6 +28,7 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockStudents, mockClasses, mockTeachers, mockFeeCharges, mockPayments, mockExams } from "@/lib/mock-data";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -51,41 +52,37 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Students", href: "/students" }, { label: student.name }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/students">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl p-2.5 border border-border/60 hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" />
-              </motion.button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-                  {student.studentId}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                {student.studentId}
+              </span>
+              <span className="text-xs font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                {student.grade}
+              </span>
+              {student.status === "at_risk" ? (
+                <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" /> Retention At-Risk
                 </span>
-                <span className="text-xs font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
-                  {student.grade}
+              ) : (
+                <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" /> Good Standing
                 </span>
-                {student.status === "at_risk" ? (
-                  <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" /> Retention At-Risk
-                  </span>
-                ) : (
-                  <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3" /> Good Standing
-                  </span>
-                )}
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
-                {student.name}
-              </h1>
-              <p className="text-xs text-muted-foreground">{student.school} • Guardian: {student.guardianName}</p>
+              )}
             </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mt-1">
+              {student.name}
+            </h1>
+            <p className="text-xs text-muted-foreground">{student.school} • Guardian: {student.guardianName}</p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -95,14 +92,25 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
               <Printer className="h-3.5 w-3.5" /> Print QR Badge
             </motion.button>
             {student.balance > 0 && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSendWhatsAppReminder}
-                className="flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/25"
-              >
-                <Send className="h-3.5 w-3.5" /> WhatsApp Reminder
-              </motion.button>
+              <>
+                <Link href="/finance/payments">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-primary to-violet-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/25"
+                  >
+                    <CreditCard className="h-3.5 w-3.5" /> Settle Arrears (LKR {student.balance})
+                  </motion.button>
+                </Link>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSendWhatsAppReminder}
+                  className="flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/25"
+                >
+                  <Send className="h-3.5 w-3.5" /> WhatsApp Reminder
+                </motion.button>
+              </>
             )}
           </div>
         </div>

@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { settingsNavItems } from "@/lib/sub-nav-items";
 
 interface FeeTier {
   id: string;
@@ -113,6 +116,9 @@ export default function FeesPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Settings", href: "/settings" }, { label: "Fee Tariffs & Splits" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -149,6 +155,11 @@ export default function FeesPage() {
               )}
             </motion.button>
           </div>
+        </div>
+
+        {/* Settings Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={settingsNavItems} />
         </div>
       </AnimatedSection>
 

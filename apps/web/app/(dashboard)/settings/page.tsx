@@ -18,6 +18,9 @@ import Link from "next/link";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import { mockInstitutes } from "@/lib/mock-data";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { settingsNavItems } from "@/lib/sub-nav-items";
 
 export default function SettingsPage() {
   const { t } = useI18n();
@@ -72,6 +75,9 @@ export default function SettingsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Settings" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -89,6 +95,11 @@ export default function SettingsPage() {
             </h1>
             <p className="text-muted-foreground mt-1">{t("settings.subtitle")}</p>
           </div>
+        </div>
+
+        {/* Settings Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={settingsNavItems} />
         </div>
       </AnimatedSection>
 

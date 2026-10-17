@@ -23,6 +23,9 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockFeeCharges, mockStudents, mockClasses, FeeChargeData } from "@/lib/mock-data";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { financeNavItems } from "@/lib/sub-nav-items";
 
 export default function FeeChargesPage() {
   const [charges, setCharges] = useState<FeeChargeData[]>(mockFeeCharges);
@@ -75,6 +78,9 @@ export default function FeeChargesPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Finance", href: "/finance" }, { label: "Fee Charges" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -113,6 +119,11 @@ export default function FeeChargesPage() {
               Add Custom Charge / Waiver
             </motion.button>
           </div>
+        </div>
+
+        {/* Finance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={financeNavItems} />
         </div>
       </AnimatedSection>
 

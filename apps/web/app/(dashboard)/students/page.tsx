@@ -24,6 +24,8 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useInstituteStore } from "@/stores/institute-store";
 
 interface StudentRecord {
   id: string;
@@ -37,6 +39,7 @@ interface StudentRecord {
   attendanceRate: number;
   paymentStatus: "paid" | "pending" | "overdue";
   balance: number;
+  instituteId?: string;
 }
 
 const initialStudents: StudentRecord[] = [
@@ -52,6 +55,7 @@ const initialStudents: StudentRecord[] = [
     attendanceRate: 94,
     paymentStatus: "overdue",
     balance: 4500,
+    instituteId: "inst-1",
   },
   {
     id: "s2",
@@ -65,6 +69,7 @@ const initialStudents: StudentRecord[] = [
     attendanceRate: 88,
     paymentStatus: "paid",
     balance: 0,
+    instituteId: "inst-1",
   },
   {
     id: "s3",
@@ -78,6 +83,7 @@ const initialStudents: StudentRecord[] = [
     attendanceRate: 96,
     paymentStatus: "paid",
     balance: 0,
+    instituteId: "inst-1",
   },
   {
     id: "s4",
@@ -91,6 +97,7 @@ const initialStudents: StudentRecord[] = [
     attendanceRate: 72,
     paymentStatus: "pending",
     balance: 3200,
+    instituteId: "inst-1",
   },
   {
     id: "s5",
@@ -104,11 +111,69 @@ const initialStudents: StudentRecord[] = [
     attendanceRate: 91,
     paymentStatus: "paid",
     balance: 0,
+    instituteId: "inst-1",
+  },
+  {
+    id: "s7",
+    studentId: "STU-0891",
+    name: "Buddhika Bandara",
+    guardianName: "Bandara Jayasundara",
+    phone: "+94 81 223 4455",
+    school: "Kingswood College, Kandy",
+    grade: "Grade 12",
+    enrolledClasses: ["A/L Combined Mathematics (Kandy)"],
+    attendanceRate: 95,
+    paymentStatus: "paid",
+    balance: 0,
+    instituteId: "inst-2",
+  },
+  {
+    id: "s8",
+    studentId: "STU-0904",
+    name: "Methmi Senaratne",
+    guardianName: "Suneth Senaratne",
+    phone: "+94 81 334 5566",
+    school: "Mahamaya Girls' College, Kandy",
+    grade: "Grade 12",
+    enrolledClasses: ["A/L Chemistry (Kandy)"],
+    attendanceRate: 92,
+    paymentStatus: "paid",
+    balance: 0,
+    instituteId: "inst-2",
+  },
+  {
+    id: "s9",
+    studentId: "STU-0945",
+    name: "Kasun Jayasuriya",
+    guardianName: "Lalith Jayasuriya",
+    phone: "+94 91 445 6677",
+    school: "Richmond College, Galle",
+    grade: "Grade 13",
+    enrolledClasses: ["A/L Physics (Galle)"],
+    attendanceRate: 89,
+    paymentStatus: "overdue",
+    balance: 4000,
+    instituteId: "inst-3",
+  },
+  {
+    id: "s10",
+    studentId: "STU-0972",
+    name: "Sanduni Abeykoon",
+    guardianName: "Priyani Abeykoon",
+    phone: "+94 91 556 7788",
+    school: "Southlands College, Galle",
+    grade: "Grade 11",
+    enrolledClasses: ["O/L Science & ICT (Galle)"],
+    attendanceRate: 97,
+    paymentStatus: "paid",
+    balance: 0,
+    instituteId: "inst-3",
   },
 ];
 
 export default function StudentsPage() {
   const { t } = useI18n();
+  const { selectedInstituteId, selectedInstitute } = useInstituteStore();
   const [students, setStudents] = useState<StudentRecord[]>(initialStudents);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending" | "overdue">("all");
@@ -124,6 +189,7 @@ export default function StudentsPage() {
   const [newClass, setNewClass] = useState("A/L Combined Maths");
 
   const filteredStudents = students.filter((student) => {
+    const matchesInstitute = selectedInstituteId === "all" || student.instituteId === selectedInstituteId;
     const matchesSearch =
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -131,7 +197,7 @@ export default function StudentsPage() {
       student.phone.includes(searchQuery);
 
     const matchesStatus = statusFilter === "all" || student.paymentStatus === statusFilter;
-    return matchesSearch && matchesStatus;
+    return matchesInstitute && matchesSearch && matchesStatus;
   });
 
   const handleAddStudent = (e: React.FormEvent) => {
@@ -169,13 +235,23 @@ export default function StudentsPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs items={[{ label: "Students" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
-              Student <span className="gradient-text">Directory</span>
-            </h1>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
+                Student <span className="gradient-text">Directory</span>
+              </h1>
+              {selectedInstitute && (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary border border-primary/20">
+                  {selectedInstitute.city} Branch
+                </span>
+              )}
+            </div>
             <p className="text-muted-foreground text-sm mt-1">
               Manage student admissions, biometric QR digital badges, and fee statuses.
             </p>

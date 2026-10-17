@@ -25,6 +25,9 @@ import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useOfflineQueue } from "@/hooks/use-offline-queue";
 import { useI18n } from "@/lib/i18n";
 import toast from "react-hot-toast";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { ModuleSubNav } from "@/components/layout/module-sub-nav";
+import { attendanceNavItems } from "@/lib/sub-nav-items";
 
 interface ScanRecord {
   id: string;
@@ -154,6 +157,9 @@ export default function QRScannerPage() {
 
   return (
     <AnimatedPage className="space-y-6">
+      {/* Breadcrumbs & Navigation */}
+      <Breadcrumbs items={[{ label: "Attendance", href: "/attendance" }, { label: "Turnstile Gate Scanner" }]} />
+
       {/* Header */}
       <AnimatedSection>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -195,6 +201,11 @@ export default function QRScannerPage() {
               <Volume2 className="h-4 w-4" />
             </button>
           </div>
+        </div>
+
+        {/* Attendance Sub-Navigation Bar */}
+        <div className="pt-2">
+          <ModuleSubNav items={attendanceNavItems} />
         </div>
       </AnimatedSection>
 
