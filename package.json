@@ -11,9 +11,19 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
-    "db:migrate": "cd apps/api && alembic upgrade head",
-    "db:revision": "cd apps/api && alembic revision --autogenerate -m",
-    "db:seed": "cd apps/api && python -m scripts.seed_db"
+    "test": "npm --workspace=@ceyora/server test",
+    "db:generate": "npm --workspace=@ceyora/server run db:generate",
+    "db:migrate": "npm --workspace=@ceyora/server run db:migrate",
+    "db:deploy": "npm --workspace=@ceyora/server run db:deploy",
+    "db:seed": "npm --workspace=@ceyora/server run db:seed",
+    "db:api:migrate": "cd apps/api && alembic upgrade head",
+    "db:api:revision": "cd apps/api && alembic revision --autogenerate -m",
+    "db:api:seed": "cd apps/api && python -m scripts.seed_db"
+  },
+  "overrides": {
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8",
+    "source-map-js": "^1.2.1"
   },
   "devDependencies": {
     "turbo": "^2.0.0"

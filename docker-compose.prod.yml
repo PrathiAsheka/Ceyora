@@ -1,0 +1,82 @@
+# ========================================================
+# Ceyora 360 Full Production Stack Orchestration
+# Run: docker compose -f docker-compose.prod.yml up -d --build
+# ========================================================
+
+services:
+  # 1. PostgreSQL Database Service
+  db:
+    image: postgres:16-alpine
+    container_name: ceyora-production-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ceyora}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ceyora_secure_password_here}
+      POSTGRES_DB: ${POSTGRES_DB:-ceyora}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ceyora-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ceyora} -d ${POSTGRES_DB:-ceyora}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ceyora-network
+
+  # 2. Ceyora REST API (Node/Express/Prisma)
+  api:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    container_name: ceyora-production-api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-ceyora}:${POSTGRES_PASSWORD:-ceyora_secure_password_here}@db:5432/${POSTGRES_DB:-ceyora}?schema=public
+      DIRECT_URL: postgresql://${POSTGRES_USER:-ceyora}:${POSTGRES_PASSWORD:-ceyora_secure_password_here}@db:5432/${POSTGRES_DB:-ceyora}?schema=public
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      SETUP_TOKEN: ${SETUP_TOKEN:-}
+      PAYHERE_MERCHANT_ID: ${PAYHERE_MERCHANT_ID:-1224890}
+      PAYHERE_SECRET: ${PAYHERE_SECRET:-897ab3c49ef01289de674a2110bc88}
+      PAYHERE_SANDBOX: ${PAYHERE_SANDBOX:-1}
+      LOG_REQUESTS: ${LOG_REQUESTS:-0}
+    ports:
+      - "4000:4000"
+    networks:
+      - ceyora-network
+
+  # 3. Ceyora Web Frontend (Next.js Standalone)
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api}
+        NEXT_PUBLIC_PAYHERE_MERCHANT_ID: ${PAYHERE_MERCHANT_ID:-1224890}
+        NEXT_PUBLIC_PAYHERE_MODE: ${PAYHERE_MODE:-sandbox}
+    container_name: ceyora-production-web
+    restart: always
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api}
+    ports:
+      - "3000:3000"
+    networks:
+      - ceyora-network
+
+volumes:
+  ceyora-pgdata:
+    driver: local
+
+networks:
+  ceyora-network:
+    driver: bridge
