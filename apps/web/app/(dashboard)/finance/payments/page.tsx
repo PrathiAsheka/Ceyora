@@ -25,20 +25,32 @@ import toast from "react-hot-toast";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { financeNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 export default function PaymentsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [payments, setPayments] = useState<PaymentRecordData[]>(mockPayments);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
 
+  // Filter students belonging to this active institute
+  const instituteStudents = mockStudents.filter(
+    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+  );
+
   // Form State
-  const [newStudentId, setNewStudentId] = useState(mockStudents[0].id);
+  const [newStudentId, setNewStudentId] = useState(instituteStudents[0]?.id || mockStudents[0].id);
   const [newAmount, setNewAmount] = useState(4500);
   const [newMethod, setNewMethod] = useState<"cash" | "payhere_online" | "bank_transfer" | "frimi">("cash");
   const [newRef, setNewRef] = useState(`CSH-${Math.floor(1000 + Math.random() * 9000)}`);
 
   const filteredPayments = payments.filter((p) => {
     const student = mockStudents.find((s) => s.id === p.studentId);
+    if (selectedInstituteId && student && student.instituteId !== selectedInstituteId) {
+      return false;
+    }
     return (
       p.receiptNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.referenceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -277,7 +289,7 @@ export default function PaymentsPage() {
                     onChange={(e) => setNewStudentId(e.target.value)}
                     className="mt-1 w-full rounded-xl border border-border/60 bg-muted/20 px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary"
                   >
-                    {mockStudents.map((s) => (
+                    {instituteStudents.map((s) => (
                       <option key={s.id} value={s.id}>{s.name} ({s.studentId})</option>
                     ))}
                   </select>

@@ -24,16 +24,37 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { financeNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes, mockClasses, mockStudents, mockExpenses } from "@/lib/mock-data";
 
 export default function FinanceDashboardPage() {
   const { t } = useI18n();
+  const { selectedInstituteId } = useInstituteStore();
+
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+  const instituteClasses = mockClasses.filter((c) => c.instituteId === currentInstitute.id);
+  const instituteStudents = mockStudents.filter((s) => s.instituteId === currentInstitute.id);
+  const instituteExpenses = mockExpenses.filter((e) => e.instituteId === currentInstitute.id);
+
+  const expectedBilling = instituteClasses.reduce((acc, c) => acc + (c.monthlyFee * c.enrolledStudentsCount), 0);
+  const collectedRevenue = instituteClasses.reduce((acc, c) => acc + c.monthlyCollection, 0);
+  const arrearsAmount = instituteStudents.reduce((acc, s) => acc + s.balance, 0);
+  const arrearsCount = instituteStudents.filter((s) => s.paymentStatus === "overdue" || s.paymentStatus === "pending").length;
+  const totalExpenses = instituteExpenses.reduce((acc, e) => acc + e.amount, 0);
+  const instituteGrossCut = instituteClasses.reduce(
+    (acc, c) => acc + Math.round(c.monthlyCollection * (c.instituteSharePercentage / 100)) + c.hallChargesDeduction,
+    0
+  );
+  const instituteNetProfit = Math.max(0, instituteGrossCut - totalExpenses);
+
+  const collectionRate = expectedBilling > 0 ? ((collectedRevenue / expectedBilling) * 100).toFixed(1) : "100";
 
   const financeKpis = [
     {
       title: "Expected Billing",
-      value: 4050000,
+      value: expectedBilling,
       prefix: "LKR ",
-      change: "Monthly Cycle (Cut-off: 10th)",
+      change: `Monthly Cycle (Cut-off: ${currentInstitute.billingCutOffDay}th)`,
       icon: Wallet,
       gradient: "from-blue-500 to-cyan-400",
       glow: "shadow-blue-500/20",
@@ -41,9 +62,9 @@ export default function FinanceDashboardPage() {
     },
     {
       title: "Collected Revenue",
-      value: 3845000,
+      value: collectedRevenue,
       prefix: "LKR ",
-      change: "94.8% Collection Rate",
+      change: `${collectionRate}% Collection Rate`,
       icon: CreditCard,
       gradient: "from-emerald-500 to-teal-400",
       glow: "shadow-emerald-500/20",
@@ -51,19 +72,19 @@ export default function FinanceDashboardPage() {
     },
     {
       title: "Outstanding Arrears",
-      value: 205000,
+      value: arrearsAmount,
       prefix: "LKR ",
-      change: "14 Students in Arrears",
+      change: `${arrearsCount} Student${arrearsCount === 1 ? "" : "s"} in Arrears`,
       icon: AlertCircle,
       gradient: "from-red-500 to-orange-400",
       glow: "shadow-red-500/20",
       bg: "from-red-500/10 to-orange-500/5",
     },
     {
-      title: "Institute Net Profit",
-      value: 1203000,
+      title: "Institute Net Retained",
+      value: instituteNetProfit,
       prefix: "LKR ",
-      change: "After Teacher Payouts & AC",
+      change: `After Teacher Remittances & Expenses`,
       icon: TrendingUp,
       gradient: "from-violet-500 to-purple-400",
       glow: "shadow-violet-500/20",
@@ -125,7 +146,8 @@ export default function FinanceDashboardPage() {
               Financial <span className="gradient-text">Intelligence</span>
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Strict separation of charges and receipts, automated WhatsApp reminders, and teacher revenue splits.
+              Double-entry fee charges, PayHere gateway settlements, and teacher remittances for{" "}
+              <span className="font-semibold text-foreground">{currentInstitute.name}</span>.
             </p>
           </div>
 

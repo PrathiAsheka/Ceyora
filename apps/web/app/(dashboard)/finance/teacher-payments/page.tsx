@@ -24,30 +24,43 @@ import toast from "react-hot-toast";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { financeNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 export default function TeacherPaymentsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [searchQuery, setSearchQuery] = useState("");
 
-  const settlements = mockTeachers.map((tea) => {
-    const assigned = mockClasses.filter((c) => tea.assignedClassIds.includes(c.id));
-    const gross = assigned.reduce((acc, c) => acc + c.monthlyCollection, 0);
-    const instShare = assigned.reduce(
-      (acc, c) => acc + Math.round(c.monthlyCollection * (c.instituteSharePercentage / 100)),
-      0
-    );
-    const hallDeduction = assigned.reduce((acc, c) => acc + c.hallChargesDeduction, 0);
-    const net = gross - instShare - hallDeduction;
+  const settlements = mockTeachers
+    .map((tea) => {
+      // Filter classes assigned to this teacher THAT ARE TAUGHT AT THIS ACTIVE INSTITUTE
+      const assigned = mockClasses.filter(
+        (c) =>
+          tea.assignedClassIds.includes(c.id) &&
+          (!selectedInstituteId || c.instituteId === selectedInstituteId)
+      );
+      if (assigned.length === 0) return null;
 
-    return {
-      teacher: tea,
-      classesCount: assigned.length,
-      gross,
-      instShare,
-      hallDeduction,
-      net,
-      status: "settled",
-    };
-  });
+      const gross = assigned.reduce((acc, c) => acc + c.monthlyCollection, 0);
+      const instShare = assigned.reduce(
+        (acc, c) => acc + Math.round(c.monthlyCollection * (c.instituteSharePercentage / 100)),
+        0
+      );
+      const hallDeduction = assigned.reduce((acc, c) => acc + c.hallChargesDeduction, 0);
+      const net = gross - instShare - hallDeduction;
+
+      return {
+        teacher: tea,
+        classesCount: assigned.length,
+        gross,
+        instShare,
+        hallDeduction,
+        net,
+        status: "settled",
+      };
+    })
+    .filter((s): s is NonNullable<typeof s> => s !== null);
 
   const filteredSettlements = settlements.filter(
     (s) =>

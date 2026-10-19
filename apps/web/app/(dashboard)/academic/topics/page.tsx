@@ -21,14 +21,26 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { academicNavItems } from "@/lib/sub-nav-items";
 
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes, mockClasses } from "@/lib/mock-data";
+
 export default function TopicsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+  const instituteSubjects = Array.from(new Set(instituteClasses.map((c) => c.subject)));
+
   const [topics, setTopics] = useState<TopicDiagnosticData[]>(mockTopicDiagnostics);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTopics = topics.filter(
     (t) =>
-      t.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.subject.toLowerCase().includes(searchQuery.toLowerCase())
+      (!selectedInstituteId || instituteSubjects.includes(t.subject)) &&
+      (t.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.subject.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const handleIssueRemediation = (topic: TopicDiagnosticData) => {

@@ -160,6 +160,17 @@ export interface SupportTicketData {
   messagesCount: number;
 }
 
+export interface ExpenseItemData {
+  id: string;
+  instituteId: string;
+  category: "Utilities & AC" | "Staff Wages" | "Print & Materials" | "Cleaning & Maintenance" | "Telecommunication & SMS" | "Rent & Lease";
+  description: string;
+  amount: number;
+  date: string;
+  voucherNumber: string;
+  approvedBy: string;
+}
+
 /* =====================================================================
    RELATIONAL DATA STORE
    ===================================================================== */
@@ -713,6 +724,7 @@ export const mockStudents: StudentData[] = [
 ];
 
 export const mockFeeCharges: FeeChargeData[] = [
+  // Colombo Main Campus (inst-1)
   {
     id: "chg-1",
     studentId: "s1",
@@ -761,14 +773,85 @@ export const mockFeeCharges: FeeChargeData[] = [
     dueDate: "2026-10-10",
     status: "paid",
   },
+  {
+    id: "chg-5",
+    studentId: "s3",
+    classId: "cls-1",
+    billingMonth: "October 2026",
+    baseAmount: 4500,
+    discountAmount: 0,
+    netAmount: 4500,
+    dueDate: "2026-10-10",
+    status: "paid",
+  },
+  // Kandy Campus (inst-2)
+  {
+    id: "chg-kdy-1",
+    studentId: "s7",
+    classId: "cls-6",
+    billingMonth: "October 2026",
+    baseAmount: 4200,
+    discountAmount: 0,
+    netAmount: 4200,
+    dueDate: "2026-10-10",
+    status: "paid",
+  },
+  {
+    id: "chg-kdy-2",
+    studentId: "s7",
+    classId: "cls-7",
+    billingMonth: "October 2026",
+    baseAmount: 4200,
+    discountAmount: 0,
+    netAmount: 4200,
+    dueDate: "2026-10-10",
+    status: "paid",
+  },
+  {
+    id: "chg-kdy-3",
+    studentId: "s8",
+    classId: "cls-6",
+    billingMonth: "October 2026",
+    baseAmount: 4200,
+    discountAmount: 630,
+    discountReason: "Sibling 15% discount (Mahamaya / Kingswood)",
+    netAmount: 3570,
+    dueDate: "2026-10-10",
+    status: "paid",
+  },
+  // Galle Fort Campus (inst-3)
+  {
+    id: "chg-gle-1",
+    studentId: "s9",
+    classId: "cls-8",
+    billingMonth: "October 2026",
+    baseAmount: 4000,
+    discountAmount: 0,
+    netAmount: 4000,
+    dueDate: "2026-10-12",
+    status: "overdue",
+    daysOverdue: 5,
+  },
+  {
+    id: "chg-gle-2",
+    studentId: "s10",
+    classId: "cls-9",
+    billingMonth: "October 2026",
+    baseAmount: 3000,
+    discountAmount: 0,
+    netAmount: 3000,
+    dueDate: "2026-10-12",
+    status: "paid",
+  },
 ];
 
 export const mockPayments: PaymentRecordData[] = [
+  // Colombo Main Campus
   {
     id: "pay-101",
     receiptNumber: "REC-2026-8901",
     studentId: "s3",
-    chargeId: "chg- Dinuka",
+    chargeId: "chg-5",
     amount: 4500,
     paymentMethod: "payhere_online",
     referenceNumber: "PH-88901452",
@@ -800,9 +883,60 @@ export const mockPayments: PaymentRecordData[] = [
     timestamp: "2026-10-14 11:15 AM",
     status: "verified",
   },
+  // Kandy Campus
+  {
+    id: "pay-kdy-1",
+    receiptNumber: "REC-KDY-101",
+    studentId: "s7",
+    chargeId: "chg-kdy-1",
+    amount: 4200,
+    paymentMethod: "cash",
+    referenceNumber: "CSH-KDY-4411",
+    collectedBy: "Kandy Front Desk",
+    timestamp: "2026-10-16 10:15 AM",
+    status: "verified",
+  },
+  {
+    id: "pay-kdy-2",
+    receiptNumber: "REC-KDY-102",
+    studentId: "s7",
+    chargeId: "chg-kdy-2",
+    amount: 4200,
+    paymentMethod: "bank_transfer",
+    referenceNumber: "BOC-KDY-7812",
+    collectedBy: "Accounts Officer",
+    timestamp: "2026-10-15 04:30 PM",
+    status: "verified",
+  },
+  {
+    id: "pay-kdy-3",
+    receiptNumber: "REC-KDY-103",
+    studentId: "s8",
+    chargeId: "chg-kdy-3",
+    amount: 3570,
+    paymentMethod: "payhere_online",
+    referenceNumber: "PH-KDY-9901",
+    collectedBy: "Automated Gateway",
+    timestamp: "2026-10-14 01:20 PM",
+    status: "verified",
+  },
+  // Galle Fort Campus
+  {
+    id: "pay-gle-1",
+    receiptNumber: "REC-GLE-101",
+    studentId: "s10",
+    chargeId: "chg-gle-2",
+    amount: 3000,
+    paymentMethod: "bank_transfer",
+    referenceNumber: "BOC-GLE-9012",
+    collectedBy: "Galle Reception",
+    timestamp: "2026-10-15 11:00 AM",
+    status: "verified",
+  },
 ];
 
 export const mockExams: ExamData[] = [
+  // Colombo Main Campus
   {
     id: "ex-1",
     classId: "cls-1",
@@ -828,6 +962,170 @@ export const mockExams: ExamData[] = [
     lowestScore: 19,
     passPercentage: 82.0,
     topicsCovered: ["Coulomb's Law", "Electromagnetism", "Faraday's Induction"],
+  },
+  // Kandy Campus
+  {
+    id: "ex-3",
+    classId: "cls-6",
+    name: "Kandy Combined Maths Mid-Term: Coordinate Geometry & Lines",
+    date: "2026-10-11",
+    totalMarks: 100,
+    passingMarks: 40,
+    averageScore: 74.2,
+    highestScore: 96,
+    lowestScore: 35,
+    passPercentage: 92.5,
+    topicsCovered: ["Straight Lines", "Angle Bisectors", "Circles"],
+  },
+  // Galle Fort Campus
+  {
+    id: "ex-4",
+    classId: "cls-8",
+    name: "Galle Physics Evaluation: Mechanics, Circular Motion & Gravitation",
+    date: "2026-10-09",
+    totalMarks: 100,
+    passingMarks: 40,
+    averageScore: 61.8,
+    highestScore: 92,
+    lowestScore: 28,
+    passPercentage: 78.0,
+    topicsCovered: ["Centripetal Acceleration", "Gravitational Field", "Kepler's Laws"],
+  },
+];
+
+export const mockExpenses: ExpenseItemData[] = [
+  // Colombo Main Campus (inst-1)
+  {
+    id: "exp-1",
+    instituteId: "inst-1",
+    category: "Utilities & AC",
+    description: "Auditorium A & B 3-Phase Electricity Bill (CEB Colombo)",
+    amount: 145000,
+    date: "2026-10-12",
+    voucherNumber: "VOU-7712",
+    approvedBy: "Campus Director",
+  },
+  {
+    id: "exp-2",
+    instituteId: "inst-1",
+    category: "Staff Wages",
+    description: "Front Gate Cashiers & QR Counter Staff Wages (Colombo)",
+    amount: 180000,
+    date: "2026-10-10",
+    voucherNumber: "VOU-7713",
+    approvedBy: "Operations Head",
+  },
+  {
+    id: "exp-3",
+    instituteId: "inst-1",
+    category: "Print & Materials",
+    description: "Combined Maths & Physics Monthly Revision Paper Printing",
+    amount: 62000,
+    date: "2026-10-06",
+    voucherNumber: "VOU-7714",
+    approvedBy: "Academic Lead",
+  },
+  {
+    id: "exp-4",
+    instituteId: "inst-1",
+    category: "Utilities & AC",
+    description: "45kVA Standby Generator Diesel (Power Cut Backup)",
+    amount: 48000,
+    date: "2026-10-04",
+    voucherNumber: "VOU-7715",
+    approvedBy: "Campus Director",
+  },
+  {
+    id: "exp-5",
+    instituteId: "inst-1",
+    category: "Telecommunication & SMS",
+    description: "Dialog Enterprise 100Mbps Fiber + Mobitel Attendance SMS",
+    amount: 35000,
+    date: "2026-10-02",
+    voucherNumber: "VOU-7716",
+    approvedBy: "Accounts Officer",
+  },
+  // Kandy Campus (inst-2)
+  {
+    id: "exp-kdy-1",
+    instituteId: "inst-2",
+    category: "Rent & Lease",
+    description: "Kandy Smart Hall & Lab Complex Monthly Lease (Peradeniya Rd)",
+    amount: 125000,
+    date: "2026-10-01",
+    voucherNumber: "VOU-KDY-201",
+    approvedBy: "Kandy Branch Manager",
+  },
+  {
+    id: "exp-kdy-2",
+    instituteId: "inst-2",
+    category: "Utilities & AC",
+    description: "Kandy Lecture Halls Air Conditioning & Electricity (CEB Central)",
+    amount: 82000,
+    date: "2026-10-11",
+    voucherNumber: "VOU-KDY-202",
+    approvedBy: "Kandy Branch Manager",
+  },
+  {
+    id: "exp-kdy-3",
+    instituteId: "inst-2",
+    category: "Staff Wages",
+    description: "Kandy Audio/Visual Sound Technician & Gate Attendant Wages",
+    amount: 45000,
+    date: "2026-10-09",
+    voucherNumber: "VOU-KDY-203",
+    approvedBy: "Accounts Officer",
+  },
+  {
+    id: "exp-kdy-4",
+    instituteId: "inst-2",
+    category: "Print & Materials",
+    description: "Chemistry Practical Worksheets & Lab Consumables",
+    amount: 28000,
+    date: "2026-10-05",
+    voucherNumber: "VOU-KDY-204",
+    approvedBy: "Kandy Branch Manager",
+  },
+  // Galle Fort Campus (inst-3)
+  {
+    id: "exp-gle-1",
+    instituteId: "inst-3",
+    category: "Rent & Lease",
+    description: "Galle Fort Study Center Facility Lease (Matara Rd)",
+    amount: 85000,
+    date: "2026-10-01",
+    voucherNumber: "VOU-GLE-301",
+    approvedBy: "Galle Branch Supervisor",
+  },
+  {
+    id: "exp-gle-2",
+    instituteId: "inst-3",
+    category: "Utilities & AC",
+    description: "Electricity & Lighting Bill (CEB Southern Province)",
+    amount: 42000,
+    date: "2026-10-10",
+    voucherNumber: "VOU-GLE-302",
+    approvedBy: "Galle Branch Supervisor",
+  },
+  {
+    id: "exp-gle-3",
+    instituteId: "inst-3",
+    category: "Telecommunication & SMS",
+    description: "SLT Mobitel Fiber Broadband & Guardian Alert SMS",
+    amount: 18000,
+    date: "2026-10-03",
+    voucherNumber: "VOU-GLE-303",
+    approvedBy: "Accounts Officer",
+  },
+  {
+    id: "exp-gle-4",
+    instituteId: "inst-3",
+    category: "Cleaning & Maintenance",
+    description: "Janitorial & Sanitization Services for Classrooms",
+    amount: 25000,
+    date: "2026-10-08",
+    voucherNumber: "VOU-GLE-304",
+    approvedBy: "Galle Branch Supervisor",
   },
 ];
 

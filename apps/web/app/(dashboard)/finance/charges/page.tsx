@@ -26,15 +26,27 @@ import toast from "react-hot-toast";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { financeNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 export default function FeeChargesPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+  const instituteStudents = mockStudents.filter(
+    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+  );
+
   const [charges, setCharges] = useState<FeeChargeData[]>(mockFeeCharges);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Form State
-  const [newStudentId, setNewStudentId] = useState(mockStudents[0].id);
-  const [newClassId, setNewClassId] = useState(mockClasses[0].id);
+  const [newStudentId, setNewStudentId] = useState(instituteStudents[0]?.id || mockStudents[0].id);
+  const [newClassId, setNewClassId] = useState(instituteClasses[0]?.id || mockClasses[0].id);
   const [newBaseAmount, setNewBaseAmount] = useState(4500);
   const [newDiscount, setNewDiscount] = useState(0);
   const [newReason, setNewReason] = useState("");
@@ -42,6 +54,9 @@ export default function FeeChargesPage() {
   const filteredCharges = charges.filter((chg) => {
     const student = mockStudents.find((s) => s.id === chg.studentId);
     const cls = mockClasses.find((c) => c.id === chg.classId);
+    if (selectedInstituteId && cls && cls.instituteId !== selectedInstituteId) {
+      return false;
+    }
     return (
       student?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student?.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -274,7 +289,7 @@ export default function FeeChargesPage() {
                     onChange={(e) => setNewStudentId(e.target.value)}
                     className="mt-1 w-full rounded-xl border border-border/60 bg-muted/20 px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary"
                   >
-                    {mockStudents.map((s) => (
+                    {instituteStudents.map((s) => (
                       <option key={s.id} value={s.id}>{s.name} ({s.studentId})</option>
                     ))}
                   </select>
@@ -287,7 +302,7 @@ export default function FeeChargesPage() {
                     onChange={(e) => setNewClassId(e.target.value)}
                     className="mt-1 w-full rounded-xl border border-border/60 bg-muted/20 px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary"
                   >
-                    {mockClasses.map((c) => (
+                    {instituteClasses.map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>

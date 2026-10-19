@@ -16,41 +16,64 @@ import {
 } from "lucide-react";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
-import { mockExams, mockTopicDiagnostics } from "@/lib/mock-data";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { academicNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes, mockClasses, mockExams, mockStudents, mockTopicDiagnostics } from "@/lib/mock-data";
 
 export default function AcademicPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+  const instituteClassIds = instituteClasses.map((c) => c.id);
+  const instituteExams = mockExams.filter((e) => instituteClassIds.includes(e.classId));
+  const instituteStudents = mockStudents.filter(
+    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+  );
+
+  const avgMark =
+    instituteStudents.length > 0
+      ? (instituteStudents.reduce((acc, s) => acc + s.averageMarks, 0) / instituteStudents.length).toFixed(1)
+      : "74.8";
+  const passRate =
+    instituteExams.length > 0
+      ? (instituteExams.reduce((acc, e) => acc + e.passPercentage, 0) / instituteExams.length).toFixed(1)
+      : "86.4";
+  const totalTopics = instituteExams.reduce((acc, e) => acc + e.topicsCovered.length, 0) || 12;
+
   const academicKpis = [
     {
       title: "Average Exam Mark",
-      value: 74.8,
+      value: Number(avgMark),
       suffix: "%",
-      change: "+4.2% vs previous term",
+      change: `Across ${instituteStudents.length} Students in ${currentInstitute.city}`,
       gradient: "from-blue-500 to-cyan-400",
       bg: "from-blue-500/10 to-cyan-500/5",
     },
     {
       title: "Batch Pass Rate",
-      value: 86.4,
+      value: Number(passRate),
       suffix: "%",
-      change: "Minimum 40 Marks",
+      change: `${instituteClasses.length} Active Batches (Pass Mark: 40)`,
       gradient: "from-emerald-500 to-teal-400",
       bg: "from-emerald-500/10 to-teal-500/5",
     },
     {
-      title: "Topics Evaluated",
-      value: 38,
-      change: "Calculus, Dynamics, Organic",
+      title: "Curriculum Topics Evaluated",
+      value: totalTopics,
+      change: "Term evaluation modules",
       gradient: "from-violet-500 to-purple-400",
       bg: "from-violet-500/10 to-purple-500/5",
     },
     {
-      title: "Remediation Topics",
-      value: 3,
-      change: "Flagged below 65% mastery",
+      title: "Active Batches",
+      value: instituteClasses.length,
+      change: `${currentInstitute.name}`,
       gradient: "from-amber-500 to-orange-400",
       bg: "from-amber-500/10 to-orange-500/5",
     },

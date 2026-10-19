@@ -22,73 +22,33 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { financeNavItems } from "@/lib/sub-nav-items";
 
-interface ExpenseItem {
-  id: string;
-  category: "Utilities & AC" | "Staff Wages" | "Print & Materials" | "Cleaning & Maintenance" | "Telecommunication & SMS";
-  description: string;
-  amount: number;
-  date: string;
-  voucherNumber: string;
-  approvedBy: string;
-}
-
-const initialExpenses: ExpenseItem[] = [
-  {
-    id: "exp-1",
-    category: "Utilities & AC",
-    description: "Auditorium A & B 3-Phase Electricity Bill (CEB)",
-    amount: 145000,
-    date: "2026-10-12",
-    voucherNumber: "VOU-7712",
-    approvedBy: "Campus Director",
-  },
-  {
-    id: "exp-2",
-    category: "Staff Wages",
-    description: "Front Gate Cashiers & QR Counter Staff Wages (October)",
-    amount: 180000,
-    date: "2026-10-10",
-    voucherNumber: "VOU-7713",
-    approvedBy: "Operations Head",
-  },
-  {
-    id: "exp-3",
-    category: "Print & Materials",
-    description: "Combined Maths & Physics Monthly Revision Paper Printing",
-    amount: 62000,
-    date: "2026-10-06",
-    voucherNumber: "VOU-7714",
-    approvedBy: "Academic Lead",
-  },
-  {
-    id: "exp-4",
-    category: "Telecommunication & SMS",
-    description: "Meta Cloud API & Bulk SMS Gateway Credits (Dialog/Mobitel)",
-    amount: 33000,
-    date: "2026-10-02",
-    voucherNumber: "VOU-7715",
-    approvedBy: "IT Supervisor",
-  },
-];
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes, mockExpenses, ExpenseItemData } from "@/lib/mock-data";
 
 export default function ExpensesPage() {
-  const [expenses, setExpenses] = useState<ExpenseItem[]>(initialExpenses);
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+  const [expenses, setExpenses] = useState<ExpenseItemData[]>(mockExpenses);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Form State
-  const [newCategory, setNewCategory] = useState<ExpenseItem["category"]>("Utilities & AC");
+  const [newCategory, setNewCategory] = useState<ExpenseItemData["category"]>("Utilities & AC");
   const [newDesc, setNewDesc] = useState("");
   const [newAmount, setNewAmount] = useState(25000);
 
-  const filteredExpenses = expenses.filter(
+  const instituteExpenses = expenses.filter(
+    (e) => !selectedInstituteId || e.instituteId === selectedInstituteId
+  );
+
+  const filteredExpenses = instituteExpenses.filter(
     (e) =>
       e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.voucherNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
+  const totalExpenses = instituteExpenses.reduce((acc, e) => acc + e.amount, 0);
 
   const handleCreateExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,8 +57,9 @@ export default function ExpensesPage() {
       return;
     }
 
-    const newRecord: ExpenseItem = {
+    const newRecord: ExpenseItemData = {
       id: "exp-" + Date.now(),
+      instituteId: currentInstitute.id,
       category: newCategory,
       description: newDesc,
       amount: Number(newAmount),

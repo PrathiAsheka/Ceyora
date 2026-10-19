@@ -23,26 +23,43 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { settingsNavItems } from "@/lib/sub-nav-items";
 
+import { useEffect } from "react";
+import { useInstituteStore } from "@/stores/institute-store";
+import toast from "react-hot-toast";
+
 export default function InstituteSettingsPage() {
   const { t } = useI18n();
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [isSaved, setIsSaved] = useState(false);
 
   // Form states initialized with realistic Sri Lankan tuition institute details
-  const [name, setName] = useState("Apex Higher Education Institute (Pvt) Ltd");
-  const [regNo, setRegNo] = useState("PV-00289410 / WP-EDU-2024-89");
-  const [phone, setPhone] = useState("+94 11 282 5590");
-  const [email, setEmail] = useState("admin@apexedu.lk");
-  const [address, setAddress] = useState("No. 45/2, High Level Road, Nugegoda, Western Province, Sri Lanka");
-  const [currency, setCurrency] = useState("LKR");
-  const [billingCutOff, setBillingCutOff] = useState("10");
+  const [name, setName] = useState(currentInstitute.name);
+  const [regNo, setRegNo] = useState(`PV-00289410 / ${currentInstitute.code}`);
+  const [phone, setPhone] = useState(currentInstitute.phone);
+  const [email, setEmail] = useState(currentInstitute.email);
+  const [address, setAddress] = useState(currentInstitute.address);
+  const [currency, setCurrency] = useState(currentInstitute.currency);
+  const [billingCutOff, setBillingCutOff] = useState(String(currentInstitute.billingCutOffDay));
   const [attendanceGrace, setAttendanceGrace] = useState("15");
   const [smsGateway, setSmsGateway] = useState("meta_whatsapp");
   const [receiptFooter, setReceiptFooter] = useState(
     "All fee transactions are certified under Sri Lanka Personal Data Protection Act No. 9 of 2022. Fees once paid are non-transferable."
   );
 
+  useEffect(() => {
+    setName(currentInstitute.name);
+    setRegNo(`PV-00289410 / ${currentInstitute.code}`);
+    setPhone(currentInstitute.phone);
+    setEmail(currentInstitute.email);
+    setAddress(currentInstitute.address);
+    setCurrency(currentInstitute.currency);
+    setBillingCutOff(String(currentInstitute.billingCutOffDay));
+  }, [currentInstitute]);
+
   const handleSave = () => {
     setIsSaved(true);
+    toast.success(`Saved configuration for ${name}`);
     setTimeout(() => setIsSaved(false), 3000);
   };
 

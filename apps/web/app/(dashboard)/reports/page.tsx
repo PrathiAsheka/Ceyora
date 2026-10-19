@@ -18,14 +18,19 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 export default function ReportsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
   const reports = [
     {
       id: "oct-2026-dossier",
-      title: "Monthly Executive Management Dossier",
+      title: `Executive Management Dossier (${currentInstitute.city})`,
       period: "October 2026",
-      desc: "Complete flagship dossier: Business Health score, Financial P&L, Teacher payouts, Attendance retention, and Topic weak-points.",
+      desc: `Complete flagship dossier for ${currentInstitute.name}: Business Health score, Financial P&L, Teacher payouts, and Attendance retention.`,
       status: "Ready to Download",
       isFlagship: true,
       gradient: "from-primary to-violet-600",

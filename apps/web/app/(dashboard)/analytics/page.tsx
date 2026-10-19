@@ -28,20 +28,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { mockClasses } from "@/lib/mock-data";
-
-const classProfitability = mockClasses.map((c) => {
-  const gross = c.monthlyCollection;
-  const teacherShare = Math.round(gross * (c.teacherSharePercentage / 100)) - c.hallChargesDeduction;
-  const netInstitute = gross - teacherShare;
-  return {
-    name: c.name.split(" ")[1] || c.name,
-    fullName: c.name,
-    gross,
-    netInstitute,
-    students: c.enrolledStudentsCount,
-  };
-});
+import { mockClasses, mockInstitutes } from "@/lib/mock-data";
+import { useInstituteStore } from "@/stores/institute-store";
 
 const attendanceCorrelationData = [
   { bracket: "<60% Att", count: 4, avgMarks: 38, dropOutRisk: "High (82%)" },
@@ -51,6 +39,25 @@ const attendanceCorrelationData = [
 ];
 
 export default function AnalyticsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+
+  const classProfitability = instituteClasses.map((c) => {
+    const gross = c.monthlyCollection;
+    const teacherShare = Math.round(gross * (c.teacherSharePercentage / 100)) - c.hallChargesDeduction;
+    const netInstitute = gross - teacherShare;
+    return {
+      name: c.name.split(" ")[1] || c.name,
+      fullName: c.name,
+      gross,
+      netInstitute,
+      students: c.enrolledStudentsCount,
+    };
+  });
   return (
     <AnimatedPage className="space-y-6">
       {/* Header */}

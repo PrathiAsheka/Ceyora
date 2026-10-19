@@ -37,6 +37,7 @@ interface ArrearsItem {
   className: string;
   dueAmount: number;
   daysOverdue: number;
+  instituteId: string;
   billingMonth: string;
   riskLevel: "High" | "Medium" | "Low";
   lastContacted?: string;
@@ -44,8 +45,10 @@ interface ArrearsItem {
 }
 
 const initialArrears: ArrearsItem[] = [
+  // Colombo Main Campus
   {
     id: "arr-1",
+    instituteId: "inst-1",
     studentId: "STU-0421",
     name: "Kavindu Perera",
     guardianName: "Sunil Perera",
@@ -60,6 +63,7 @@ const initialArrears: ArrearsItem[] = [
   },
   {
     id: "arr-2",
+    instituteId: "inst-1",
     studentId: "STU-0294",
     name: "Tharushi Fernando",
     guardianName: "Malini Fernando",
@@ -73,6 +77,7 @@ const initialArrears: ArrearsItem[] = [
   },
   {
     id: "arr-3",
+    instituteId: "inst-1",
     studentId: "STU-0881",
     name: "Praveen Jayasinghe",
     guardianName: "Ananda Jayasinghe",
@@ -85,29 +90,57 @@ const initialArrears: ArrearsItem[] = [
     lastContacted: "7 days ago",
     dispatchStatus: "pending",
   },
+  // Kandy Campus
   {
-    id: "arr-4",
-    studentId: "STU-0932",
-    name: "Sanduni Alwis",
-    guardianName: "Chithra Alwis",
-    guardianPhone: "+94762223344",
-    className: "A/L Chemistry 2026 (Theory)",
-    dueAmount: 4200,
-    daysOverdue: 11,
+    id: "arr-kdy-1",
+    instituteId: "inst-2",
+    studentId: "STU-0904",
+    name: "Methmi Senaratne",
+    guardianName: "Suneth Senaratne",
+    guardianPhone: "+94813345566",
+    className: "A/L Combined Mathematics (Kandy Branch)",
+    dueAmount: 3570,
+    daysOverdue: 3,
     billingMonth: "October 2026",
-    riskLevel: "High",
+    riskLevel: "Low",
+    lastContacted: "Yesterday",
+    dispatchStatus: "pending",
+  },
+  // Galle Fort Campus
+  {
+    id: "arr-gle-1",
+    instituteId: "inst-3",
+    studentId: "STU-0945",
+    name: "Kasun Jayasuriya",
+    guardianName: "Lalith Jayasuriya",
+    guardianPhone: "+94914456677",
+    className: "A/L Physics (Galle Fort Campus)",
+    dueAmount: 4000,
+    daysOverdue: 5,
+    billingMonth: "October 2026",
+    riskLevel: "Medium",
+    lastContacted: "4 days ago",
     dispatchStatus: "pending",
   },
 ];
 
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
+
 export default function OutstandingFeesPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [arrears, setArrears] = useState<ArrearsItem[]>(initialArrears);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudentForMessage, setSelectedStudentForMessage] = useState<ArrearsItem | null>(null);
   const [isBatchDispatching, setIsBatchDispatching] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const filteredArrears = arrears.filter(
+  const instituteArrears = arrears.filter(
+    (item) => !selectedInstituteId || item.instituteId === selectedInstituteId
+  );
+
+  const filteredArrears = instituteArrears.filter(
     (item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -115,10 +148,10 @@ export default function OutstandingFeesPage() {
       item.className.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalOutstanding = arrears.reduce((acc, a) => acc + a.dueAmount, 0);
+  const totalOutstanding = instituteArrears.reduce((acc, a) => acc + a.dueAmount, 0);
 
   const generateMessageText = (item: ArrearsItem) => {
-    return `Hello ${item.guardianName}, this is a gentle reminder from Apex Higher Education Institute. The tuition fee of LKR ${item.dueAmount.toLocaleString()} for ${item.name} (${item.studentId}) for ${item.billingMonth} (${item.className}) is outstanding. Settle online via PayHere: https://pay.ceyora.lk/inv/${item.studentId} or at the campus counter. Thank you!`;
+    return `Hello ${item.guardianName}, this is a gentle reminder from ${currentInstitute.name}. The tuition fee of LKR ${item.dueAmount.toLocaleString()} for ${item.name} (${item.studentId}) for ${item.billingMonth} (${item.className}) is outstanding. Settle online via PayHere: https://pay.ceyora.lk/inv/${item.studentId} or at our cashier counter. Thank you!`;
   };
 
   const handleCopyMessage = (item: ArrearsItem) => {

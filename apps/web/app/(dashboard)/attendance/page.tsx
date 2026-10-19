@@ -26,11 +26,23 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { attendanceNavItems } from "@/lib/sub-nav-items";
 
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
+
 export default function AttendancePage() {
-  const atRiskStudents = mockStudents.filter((s) => s.attendanceRate < 75);
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+  const instituteStudents = mockStudents.filter(
+    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+  );
+  const atRiskStudents = instituteStudents.filter((s) => s.attendanceRate < 75);
 
   const handleAlertParent = (studentName: string, phone: string) => {
-    toast.success(`Dispatched attendance alert SMS to guardian of ${studentName} (${phone})`, {
+    toast.success(`Dispatched attendance alert SMS from ${currentInstitute.name} to guardian of ${studentName} (${phone})`, {
       icon: "📲",
     });
   };
@@ -129,7 +141,7 @@ export default function AttendancePage() {
             </div>
 
             <div className="space-y-3.5 pt-1">
-              {mockClasses.map((cls) => {
+              {instituteClasses.map((cls) => {
                 const percentage = Math.round((cls.presentLastClass / cls.enrolledStudentsCount) * 100);
                 return (
                   <div key={cls.id} className="p-3.5 rounded-2xl border border-border/40 bg-muted/20 space-y-2">

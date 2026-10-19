@@ -23,36 +23,59 @@ import toast from "react-hot-toast";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ModuleSubNav } from "@/components/layout/module-sub-nav";
 import { academicNavItems } from "@/lib/sub-nav-items";
+import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 export default function ExamsPage() {
+  const { selectedInstituteId } = useInstituteStore();
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
+
+  const instituteClasses = mockClasses.filter(
+    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+  );
+  const instituteClassIds = instituteClasses.map((c) => c.id);
+
   const [exams, setExams] = useState<ExamData[]>(mockExams);
-  const [selectedExamId, setSelectedExamId] = useState(mockExams[0].id);
+  const instituteExams = exams.filter((e) => instituteClassIds.includes(e.classId));
+
+  const [selectedExamId, setSelectedExamId] = useState(
+    instituteExams[0]?.id || mockExams[0].id
+  );
   const [anonymizePdpa, setAnonymizePdpa] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // New Exam Form State
   const [newTitle, setNewTitle] = useState("");
-  const [newClassId, setNewClassId] = useState(mockClasses[0].id);
+  const [newClassId, setNewClassId] = useState(instituteClasses[0]?.id || mockClasses[0].id);
   const [newTotalMarks, setNewTotalMarks] = useState(100);
   const [newPassingMarks, setNewPassingMarks] = useState(40);
 
-  const selectedExam = exams.find((e) => e.id === selectedExamId) || exams[0];
+  const selectedExam =
+    instituteExams.find((e) => e.id === selectedExamId) ||
+    instituteExams[0] ||
+    exams[0];
   const examClass = mockClasses.find((c) => c.id === selectedExam.classId);
 
-  // Sample student marks for selected exam
-  const studentResults = [
-    { student: mockStudents[5], marks: 98, grade: "A", rank: 1, status: "pass" },
-    { student: mockStudents[2], marks: 91, grade: "A", rank: 2, status: "pass" },
-    { student: mockStudents[1], marks: 84, grade: "A", rank: 6, status: "pass" },
-    { student: mockStudents[0], marks: 76, grade: "B", rank: 14, status: "pass" },
-    { student: mockStudents[4], marks: 68, grade: "C", rank: 24, status: "pass" },
-    { student: mockStudents[3], marks: 34, grade: "F", rank: 42, status: "fail" },
-  ];
+  // Derive students belonging to this institute/class
+  const classStudents = mockStudents.filter(
+    (s) =>
+      s.enrolledClassIds.includes(selectedExam.classId) ||
+      (selectedInstituteId && s.instituteId === selectedInstituteId)
+  );
 
-  const filteredResults = studentResults.filter((r) =>
-    r.student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
+  const studentResults = classStudents.map((s, idx) => ({
+    student: s,
+    marks: Math.max(35, Math.min(98, Math.round(s.averageMarks + (idx % 2 === 0 ? 4 : -3)))),
+    grade: s.averageMarks >= 75 ? "A" : s.averageMarks >= 65 ? "B" : s.averageMarks >= 50 ? "C" : "S",
+    rank: s.recentRank,
+    status: s.averageMarks >= 40 ? "pass" : "fail",
+  }));
+
+  const filteredResults = studentResults.filter(
+    (r) =>
+      r.student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleCreateExam = (e: React.FormEvent) => {
