@@ -26,6 +26,16 @@ const MAX_INVITE_DAYS = 60;
 /** Simple in-memory brake on password guessing: 10 failures per 15 minutes per username + IP. */
 const failures = new Map<string, { count: number; first: number }>();
 const WINDOW = 15 * 60_000;
+
+// Periodic cleanup of expired auth failure records (runs every 10 minutes without blocking shutdown)
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of failures.entries()) {
+    if (now - entry.first >= WINDOW) {
+      failures.delete(key);
+    }
+  }
+}, 10 * 60 * 1000).unref();
 function throttle(key: string) {
   const entry = failures.get(key);
   if (entry && Date.now() - entry.first < WINDOW && entry.count >= 10) {

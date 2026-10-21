@@ -12,7 +12,7 @@ import { recordAuditEntry } from "../lib/pdpa";
 
 export const importRouter = Router();
 
-const studentImportRowSchema = z.object({
+export const studentImportRowSchema = z.object({
   registration_id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   parent_name: z.string().min(1, "Guardian name is required"),
@@ -22,7 +22,7 @@ const studentImportRowSchema = z.object({
   date_of_birth: z.string().optional(),
 });
 
-function normalizeSriLankanPhone(phone: string): { normalized: string; warning?: string } {
+export function normalizeSriLankanPhone(phone: string): { normalized: string; warning?: string } {
   let cleaned = phone.replace(/[^0-9+]/g, "");
   if (cleaned.startsWith("07") && cleaned.length === 10) {
     cleaned = `+94${cleaned.slice(1)}`;

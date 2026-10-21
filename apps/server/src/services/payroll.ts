@@ -46,13 +46,13 @@ const rupees = (value: number) => `Rs ${Math.round(value).toLocaleString("en-US"
 const DEFAULT_UNITS = { daily: 26, hourly: 160 } as const;
 
 /** "08:00 - 10:00" -> 2. Falls back to 2 hours when the slot cannot be read. */
-function slotHours(timeSlot: string): number {
+export function slotHours(timeSlot: string): number {
   const times = [...timeSlot.matchAll(/(\d{1,2})[:.](\d{2})/g)].map((m) => Number(m[1]) + Number(m[2]) / 60);
   if (times.length >= 2 && times[1] > times[0]) return Math.round((times[1] - times[0]) * 100) / 100;
   return 2;
 }
 
-function teacherRateLabel(teacher: Teacher): string {
+export function teacherRateLabel(teacher: Teacher): string {
   switch (teacher.compensation_type) {
     case "percentage":
       return `${teacher.compensation_value}% of class fees`;
@@ -71,7 +71,7 @@ function staffRateLabel(member: Staff): string {
 }
 
 /** What gross pay is computed from for one cycle. */
-interface EarningsData {
+export interface EarningsData {
   classes: Class[];
   /** Active students per class. */
   students: Map<string, number>;
@@ -93,7 +93,7 @@ async function earningsData(scope: string | undefined, period: string): Promise<
   return { classes, students, billed };
 }
 
-function teacherEarnings(teacher: Teacher, period: string, data: EarningsData): EarningLine[] {
+export function teacherEarnings(teacher: Teacher, period: string, data: EarningsData): EarningLine[] {
   const [year, month] = period.split("-").map(Number);
   return data.classes
     .filter((c) => c.teacher_id === teacher.id)

@@ -16,6 +16,16 @@ const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 300; // 300 req/min
 
+// Periodic cleanup of expired rate limiter records (runs every 2 minutes without blocking shutdown)
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of requestCounts.entries()) {
+    if (now > record.resetTime) {
+      requestCounts.delete(ip);
+    }
+  }
+}, 2 * 60 * 1000).unref();
+
 function rateLimiter(req: express.Request, res: express.Response, next: express.NextFunction) {
   const ip = req.ip || req.socket.remoteAddress || "unknown";
   const now = Date.now();

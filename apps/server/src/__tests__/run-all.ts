@@ -5,6 +5,10 @@
 import "./payhere.test";
 import "./pdpa.test";
 import "./auth-security.test";
+import "./calendar.test";
+import "./fees-ledger.test";
+import "./payroll.test";
+import "./import-etl.test";
 
 console.log("----------------------------------------------------------------");
 console.log("✔ ALL CEYORA SERVER PRODUCTION & SECURITY TEST SUITES PASSED OK");
