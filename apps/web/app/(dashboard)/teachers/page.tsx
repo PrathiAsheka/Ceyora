@@ -45,6 +45,7 @@ export default function TeachersPage() {
 
   const filteredTeachers = teachers.filter((t) => {
     const matchesInstitute =
+      !selectedInstituteId ||
       selectedInstituteId === "all" ||
       t.assignedClassIds.some((cid) => mockClasses.some((c) => c.id === cid && c.instituteId === selectedInstituteId));
     const matchesSearch =

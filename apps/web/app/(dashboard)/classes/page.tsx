@@ -44,7 +44,7 @@ export default function ClassesPage() {
   const [newSlot, setNewSlot] = useState("Saturdays 08:30 AM - 01:00 PM");
 
   const filteredClasses = classes.filter((cls) => {
-    const matchesInstitute = selectedInstituteId === "all" || cls.instituteId === selectedInstituteId;
+    const matchesInstitute = !selectedInstituteId || selectedInstituteId === "all" || cls.instituteId === selectedInstituteId;
     const matchesSearch =
       cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       cls.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -66,7 +66,7 @@ export default function ClassesPage() {
       code: `CLS-${Math.floor(100 + Math.random() * 900)}`,
       subject: newSubject,
       teacherId: newTeacherId,
-      instituteId: "inst-1",
+      instituteId: selectedInstituteId && selectedInstituteId !== "all" ? selectedInstituteId : "inst-1",
       grade: newGrade,
       medium: newMedium,
       dayOfWeek: newSlot.split(" ")[0] || "Saturday",

@@ -30,11 +30,29 @@ import { mockInstitutes, mockClasses, mockStudents, mockExpenses } from "@/lib/m
 export default function FinanceDashboardPage() {
   const { t } = useI18n();
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
 
-  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
-  const instituteClasses = mockClasses.filter((c) => c.instituteId === currentInstitute.id);
-  const instituteStudents = mockStudents.filter((s) => s.instituteId === currentInstitute.id);
-  const instituteExpenses = mockExpenses.filter((e) => e.instituteId === currentInstitute.id);
+  const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || {
+    id: "all",
+    name: "All Branches (Consolidated Network)",
+    code: "APEX-ALL",
+    city: "National (Colombo, Kandy, Galle)",
+    address: "Consolidated Network Operations",
+    phone: "+94 11 269 5544",
+    email: "finance@apexedu.lk",
+    branchesCount: 3,
+    activeStudents: 2794,
+    activeClasses: 58,
+    monthlyRevenue: 8015000,
+    billingCutOffDay: 10,
+    gatewayStatus: "active" as const,
+    currency: "LKR",
+    status: "active" as const,
+  };
+
+  const instituteClasses = mockClasses.filter((c) => isAll || c.instituteId === selectedInstituteId);
+  const instituteStudents = mockStudents.filter((s) => isAll || s.instituteId === selectedInstituteId);
+  const instituteExpenses = mockExpenses.filter((e) => isAll || e.instituteId === selectedInstituteId);
 
   const expectedBilling = instituteClasses.reduce((acc, c) => acc + (c.monthlyFee * c.enrolledStudentsCount), 0);
   const collectedRevenue = instituteClasses.reduce((acc, c) => acc + c.monthlyCollection, 0);

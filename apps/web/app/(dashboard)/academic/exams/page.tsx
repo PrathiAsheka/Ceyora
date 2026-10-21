@@ -28,10 +28,11 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function ExamsPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
   const instituteClassIds = instituteClasses.map((c) => c.id);
 
@@ -55,13 +56,14 @@ export default function ExamsPage() {
     instituteExams.find((e) => e.id === selectedExamId) ||
     instituteExams[0] ||
     exams[0];
-  const examClass = mockClasses.find((c) => c.id === selectedExam.classId);
+  const examClass = mockClasses.find((c) => c.id === selectedExam?.classId) || mockClasses[0];
 
   // Derive students belonging to this institute/class
   const classStudents = mockStudents.filter(
     (s) =>
-      s.enrolledClassIds.includes(selectedExam.classId) ||
-      (selectedInstituteId && s.instituteId === selectedInstituteId)
+      (selectedExam && s.enrolledClassIds.includes(selectedExam.classId)) ||
+      (!isAll && s.instituteId === selectedInstituteId) ||
+      (isAll && instituteClassIds.some((cid) => s.enrolledClassIds.includes(cid)))
   );
 
   const studentResults = classStudents.map((s, idx) => ({

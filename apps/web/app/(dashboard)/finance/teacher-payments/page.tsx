@@ -29,6 +29,7 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function TeacherPaymentsPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -38,7 +39,7 @@ export default function TeacherPaymentsPage() {
       const assigned = mockClasses.filter(
         (c) =>
           tea.assignedClassIds.includes(c.id) &&
-          (!selectedInstituteId || c.instituteId === selectedInstituteId)
+          (isAll || c.instituteId === selectedInstituteId)
       );
       if (assigned.length === 0) return null;
 

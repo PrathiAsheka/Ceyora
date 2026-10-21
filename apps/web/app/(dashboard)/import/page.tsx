@@ -22,6 +22,7 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import { mockClasses, mockStudents, mockTeachers } from "@/lib/mock-data";
+import { apiClient } from "@/lib/api-client";
 
 type ImportEntity = "students" | "teachers" | "classes" | "feeCharges" | "examResults";
 
@@ -122,9 +123,15 @@ export default function DataImportPage() {
     return matchesFilter && matchesSearch;
   });
 
-  const handleSimulateImport = () => {
+  const handleSimulateImport = async () => {
     setIsProcessing(true);
     setProgress(0);
+    const validRows = previewRows.filter((r) => r.status !== "error");
+    try {
+      await apiClient.batchImport("inst-1", selectedEntity, validRows);
+    } catch {
+      // offline simulation handles it
+    }
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -135,7 +142,7 @@ export default function DataImportPage() {
         }
         return prev + 25;
       });
-    }, 300);
+    }, 200);
   };
 
   const handleDownloadSample = () => {

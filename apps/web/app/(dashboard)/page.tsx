@@ -40,6 +40,7 @@ import {
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useInstituteStore } from "@/stores/institute-store";
+import { mockInstitutes } from "@/lib/mock-data";
 
 const monthlyRevenueData = [
   { month: "Jan", expected: 2800000, collected: 2650000, attendance: 89 },
@@ -166,9 +167,15 @@ export default function DashboardPage() {
   const [chartMetric, setChartMetric] = useState<"revenue" | "attendance">("revenue");
   const [isSendingReminders, setIsSendingReminders] = useState(false);
 
-  const totalStudents = selectedInstitute ? selectedInstitute.activeStudents : 1284;
-  const activeClassesCount = selectedInstitute ? selectedInstitute.activeClasses : 28;
-  const monthlyRevenue = selectedInstitute ? selectedInstitute.monthlyRevenue : 3845000;
+  const totalStudents = selectedInstitute
+    ? selectedInstitute.activeStudents
+    : mockInstitutes.reduce((acc, i) => acc + i.activeStudents, 0);
+  const activeClassesCount = selectedInstitute
+    ? selectedInstitute.activeClasses
+    : mockInstitutes.reduce((acc, i) => acc + i.activeClasses, 0);
+  const monthlyRevenue = selectedInstitute
+    ? selectedInstitute.monthlyRevenue
+    : mockInstitutes.reduce((acc, i) => acc + i.monthlyRevenue, 0);
 
   const kpis = [
     {
@@ -231,7 +238,7 @@ export default function DashboardPage() {
   };
 
   const currentLiveClasses = liveClasses.filter(
-    (cls) => selectedInstituteId === "all" || cls.instituteId === selectedInstituteId
+    (cls) => !selectedInstituteId || selectedInstituteId === "all" || cls.instituteId === selectedInstituteId
   );
 
   return (

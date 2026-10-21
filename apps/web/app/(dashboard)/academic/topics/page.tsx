@@ -26,10 +26,11 @@ import { mockInstitutes, mockClasses } from "@/lib/mock-data";
 
 export default function TopicsPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
   const instituteSubjects = Array.from(new Set(instituteClasses.map((c) => c.subject)));
 
@@ -38,7 +39,7 @@ export default function TopicsPage() {
 
   const filteredTopics = topics.filter(
     (t) =>
-      (!selectedInstituteId || instituteSubjects.includes(t.subject)) &&
+      (isAll || instituteSubjects.includes(t.subject)) &&
       (t.topicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.subject.toLowerCase().includes(searchQuery.toLowerCase()))
   );

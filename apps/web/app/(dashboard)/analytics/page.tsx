@@ -40,10 +40,11 @@ const attendanceCorrelationData = [
 
 export default function AnalyticsPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
 
   const classProfitability = instituteClasses.map((c) => {

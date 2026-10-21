@@ -129,6 +129,7 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function OutstandingFeesPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [arrears, setArrears] = useState<ArrearsItem[]>(initialArrears);
   const [searchQuery, setSearchQuery] = useState("");
@@ -137,7 +138,7 @@ export default function OutstandingFeesPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const instituteArrears = arrears.filter(
-    (item) => !selectedInstituteId || item.instituteId === selectedInstituteId
+    (item) => isAll || item.instituteId === selectedInstituteId
   );
 
   const filteredArrears = instituteArrears.filter(

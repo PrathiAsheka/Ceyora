@@ -24,10 +24,12 @@ import {
 } from "lucide-react";
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { mockInstitutes, InstituteData } from "@/lib/mock-data";
+import { useInstituteStore } from "@/stores/institute-store";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function InstitutesPage() {
+  const { selectedInstituteId, setSelectedInstituteId } = useInstituteStore();
   const [institutes, setInstitutes] = useState<InstituteData[]>(mockInstitutes);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -193,9 +195,16 @@ export default function InstitutesPage() {
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-                        {inst.code}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                          {inst.code}
+                        </span>
+                        {selectedInstituteId === inst.id && (
+                          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                            Active Context
+                          </span>
+                        )}
+                      </div>
                       <h3 className="text-base font-bold text-foreground mt-1.5 group-hover:text-primary transition-colors">
                         {inst.name}
                       </h3>
@@ -238,12 +247,28 @@ export default function InstitutesPage() {
                   </div>
                 </div>
 
-                <Link href={`/institutes/${inst.id}`}>
-                  <button className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-border/60 py-2.5 text-xs font-bold text-foreground hover:bg-primary hover:text-white hover:border-primary transition-all">
-                    <span>Manage Branch Hub</span>
-                    <ChevronRight className="h-3.5 w-3.5" />
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedInstituteId(inst.id);
+                      toast.success(`Switched active branch to ${inst.name}`);
+                    }}
+                    className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all ${
+                      selectedInstituteId === inst.id
+                        ? "bg-primary text-white shadow-md shadow-primary/25"
+                        : "border border-border/60 hover:bg-muted/50 text-foreground"
+                    }`}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>{selectedInstituteId === inst.id ? "Active Branch" : "Set Active"}</span>
                   </button>
-                </Link>
+                  <Link href={`/institutes/${inst.id}`}>
+                    <button className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-border/60 py-2.5 text-xs font-bold text-foreground hover:bg-muted/50 transition-all">
+                      <span>Hub Details</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </Link>
+                </div>
               </div>
             </AnimatedSection>
           ))}

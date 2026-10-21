@@ -31,13 +31,14 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function AttendancePage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
   const instituteStudents = mockStudents.filter(
-    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+    (s) => isAll || s.instituteId === selectedInstituteId
   );
   const atRiskStudents = instituteStudents.filter((s) => s.attendanceRate < 75);
 

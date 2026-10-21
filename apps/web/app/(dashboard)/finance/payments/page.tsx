@@ -30,6 +30,7 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function PaymentsPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [payments, setPayments] = useState<PaymentRecordData[]>(mockPayments);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,7 +38,7 @@ export default function PaymentsPage() {
 
   // Filter students belonging to this active institute
   const instituteStudents = mockStudents.filter(
-    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+    (s) => isAll || s.instituteId === selectedInstituteId
   );
 
   // Form State
@@ -48,7 +49,7 @@ export default function PaymentsPage() {
 
   const filteredPayments = payments.filter((p) => {
     const student = mockStudents.find((s) => s.id === p.studentId);
-    if (selectedInstituteId && student && student.instituteId !== selectedInstituteId) {
+    if (!isAll && student && student.instituteId !== selectedInstituteId) {
       return false;
     }
     return (

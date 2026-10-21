@@ -189,7 +189,7 @@ export default function StudentsPage() {
   const [newClass, setNewClass] = useState("A/L Combined Maths");
 
   const filteredStudents = students.filter((student) => {
-    const matchesInstitute = selectedInstituteId === "all" || student.instituteId === selectedInstituteId;
+    const matchesInstitute = !selectedInstituteId || selectedInstituteId === "all" || student.instituteId === selectedInstituteId;
     const matchesSearch =
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.studentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -219,6 +219,7 @@ export default function StudentsPage() {
       attendanceRate: 100,
       paymentStatus: "paid",
       balance: 0,
+      instituteId: selectedInstituteId && selectedInstituteId !== "all" ? selectedInstituteId : "inst-1",
     };
 
     setStudents([newRecord, ...students]);

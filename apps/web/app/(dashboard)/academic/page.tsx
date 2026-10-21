@@ -25,15 +25,16 @@ import { mockInstitutes, mockClasses, mockExams, mockStudents, mockTopicDiagnost
 
 export default function AcademicPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
   const instituteClassIds = instituteClasses.map((c) => c.id);
   const instituteExams = mockExams.filter((e) => instituteClassIds.includes(e.classId));
   const instituteStudents = mockStudents.filter(
-    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+    (s) => isAll || s.instituteId === selectedInstituteId
   );
 
   const avgMark =

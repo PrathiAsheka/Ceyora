@@ -31,13 +31,14 @@ import { mockInstitutes } from "@/lib/mock-data";
 
 export default function FeeChargesPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
 
   const instituteClasses = mockClasses.filter(
-    (c) => !selectedInstituteId || c.instituteId === selectedInstituteId
+    (c) => isAll || c.instituteId === selectedInstituteId
   );
   const instituteStudents = mockStudents.filter(
-    (s) => !selectedInstituteId || s.instituteId === selectedInstituteId
+    (s) => isAll || s.instituteId === selectedInstituteId
   );
 
   const [charges, setCharges] = useState<FeeChargeData[]>(mockFeeCharges);
@@ -54,7 +55,7 @@ export default function FeeChargesPage() {
   const filteredCharges = charges.filter((chg) => {
     const student = mockStudents.find((s) => s.id === chg.studentId);
     const cls = mockClasses.find((c) => c.id === chg.classId);
-    if (selectedInstituteId && cls && cls.instituteId !== selectedInstituteId) {
+    if (!isAll && cls && cls.instituteId !== selectedInstituteId) {
       return false;
     }
     return (

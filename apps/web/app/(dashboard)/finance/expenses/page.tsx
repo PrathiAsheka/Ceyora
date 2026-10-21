@@ -27,6 +27,7 @@ import { mockInstitutes, mockExpenses, ExpenseItemData } from "@/lib/mock-data";
 
 export default function ExpensesPage() {
   const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const currentInstitute = mockInstitutes.find((i) => i.id === selectedInstituteId) || mockInstitutes[0];
   const [expenses, setExpenses] = useState<ExpenseItemData[]>(mockExpenses);
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +39,7 @@ export default function ExpensesPage() {
   const [newAmount, setNewAmount] = useState(25000);
 
   const instituteExpenses = expenses.filter(
-    (e) => !selectedInstituteId || e.instituteId === selectedInstituteId
+    (e) => isAll || e.instituteId === selectedInstituteId
   );
 
   const filteredExpenses = instituteExpenses.filter(

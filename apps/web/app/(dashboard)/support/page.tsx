@@ -29,6 +29,7 @@ import {
 import { AnimatedPage, AnimatedSection } from "@/components/animated-page";
 import { useI18n } from "@/lib/i18n";
 import { mockSupportTickets, SupportTicketData } from "@/lib/mock-data";
+import { useInstituteStore } from "@/stores/institute-store";
 
 interface TicketMessage {
   id: string;
@@ -40,6 +41,8 @@ interface TicketMessage {
 
 export default function SupportPage() {
   const { t } = useI18n();
+  const { selectedInstituteId } = useInstituteStore();
+  const isAll = !selectedInstituteId || selectedInstituteId === "all";
   const [tickets, setTickets] = useState<SupportTicketData[]>(mockSupportTickets);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicketData | null>(null);
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -93,13 +96,14 @@ export default function SupportPage() {
   });
 
   const filteredTickets = tickets.filter((ticket) => {
+    const matchesInstitute = isAll || !ticket.instituteId || ticket.instituteId === selectedInstituteId;
     const matchesCat = categoryFilter === "all" || ticket.category === categoryFilter;
     const matchesStat = statusFilter === "all" || ticket.status === statusFilter;
     const matchesQuery =
       ticket.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ticket.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ticket.senderName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCat && matchesStat && matchesQuery;
+    return matchesInstitute && matchesCat && matchesStat && matchesQuery;
   });
 
   const handleCreateTicket = (e: React.FormEvent) => {
@@ -112,7 +116,7 @@ export default function SupportPage() {
     const createdTicket: SupportTicketData = {
       id: newTicketId,
       ticketNumber: newNumber,
-      instituteId: "inst-1",
+      instituteId: selectedInstituteId && selectedInstituteId !== "all" ? selectedInstituteId : "inst-1",
       senderName: newSenderName,
       senderRole: newSenderRole,
       subject: newSubject,
