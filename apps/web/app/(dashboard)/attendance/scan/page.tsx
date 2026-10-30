@@ -210,7 +210,7 @@ export default function QRScannerPage() {
       </AnimatedSection>
 
       {/* Main Scanner Grid */}
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Left Column: Live Viewfinder */}
         <AnimatedSection className="lg:col-span-7">
           <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-sm border border-border/60 space-y-5">

@@ -196,7 +196,7 @@ export function Topbar() {
           </div>
 
           {/* Search Bar / Cmd+K Trigger */}
-          <div className="relative max-w-md flex-1">
+          <div className="relative max-w-md flex-1 min-w-0">
             <button
               onClick={() => setCommandPaletteOpen(true)}
               className="w-full flex items-center justify-between rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 px-3.5 py-2 text-sm text-muted-foreground transition-all duration-200"

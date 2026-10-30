@@ -331,7 +331,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Charts & Realtime Classes Row */}
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Left Column: Visual Revenue / Attendance Trajectory */}
         <AnimatedSection className="lg:col-span-8">
           <div className="glass-card rounded-3xl p-6 shadow-sm border border-border/60 h-full flex flex-col justify-between">
@@ -494,7 +494,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom Row: Actionable Fee Arrears Recovery & Quick Launch Tools */}
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* At-Risk Fee Recovery Panel */}
         <AnimatedSection className="lg:col-span-8">
           <div className="glass-card rounded-3xl p-6 shadow-sm border border-border/60">

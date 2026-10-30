@@ -86,9 +86,9 @@ export function FloatingCommandDock({ onToggleActivityDrawer, isActivityDrawerOp
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40"
+        className="fixed inset-x-0 bottom-5 z-40 flex justify-center px-3 pointer-events-none"
       >
-        <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-background/80 backdrop-blur-2xl border border-border/50 shadow-2xl shadow-primary/10 transition-all hover:scale-[1.02] hover:border-primary/40">
+        <div className="pointer-events-auto max-w-full flex items-center gap-1.5 p-1.5 rounded-full bg-background/80 backdrop-blur-2xl border border-border/50 shadow-2xl shadow-primary/10 transition-all hover:scale-[1.02] hover:border-primary/40">
           {/* Quick Turnstile Scan */}
           <button
             onClick={() => {

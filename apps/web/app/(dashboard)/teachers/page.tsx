@@ -183,7 +183,7 @@ export default function TeachersPage() {
       </div>
 
       {/* Teachers Grid */}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {filteredTeachers.map((tea) => {
           const assignedClasses = mockClasses.filter((c) => tea.assignedClassIds.includes(c.id));
           return (
