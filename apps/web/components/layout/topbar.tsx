@@ -163,7 +163,7 @@ export function Topbar() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.96 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute left-0 top-full mt-2 z-50 w-72 rounded-2xl border border-border/60 glass-card shadow-2xl overflow-hidden p-1.5"
+                    className="absolute left-0 top-full mt-2 z-50 w-72 rounded-2xl border border-border/60 bg-card shadow-2xl overflow-hidden p-1.5"
                   >
                     <div className="px-3 py-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Switch Institute Branch
@@ -199,10 +199,10 @@ export function Topbar() {
           <div className="relative max-w-md flex-1 min-w-0">
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 px-3.5 py-2 text-sm text-muted-foreground transition-all duration-200"
+              className="w-full min-w-0 flex items-center justify-between rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 px-3.5 py-2 text-sm text-muted-foreground transition-all duration-200"
             >
-              <div className="flex items-center gap-2.5">
-                <Search className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="text-xs sm:text-sm truncate">Search students, classes, records...</span>
               </div>
               <div className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground/60 font-mono">
@@ -237,7 +237,7 @@ export function Topbar() {
                     initial={{ opacity: 0, y: -6, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-2 z-50 w-44 rounded-xl border border-border/60 glass-card shadow-xl overflow-hidden p-1"
+                    className="absolute right-0 top-full mt-2 z-50 w-44 rounded-xl border border-border/60 bg-card shadow-xl overflow-hidden p-1"
                   >
                     <button
                       onClick={() => {
@@ -321,7 +321,7 @@ export function Topbar() {
                     initial={{ opacity: 0, y: -6, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-2 z-50 w-80 sm:w-96 rounded-2xl border border-border/60 glass-card shadow-2xl overflow-hidden"
+                    className="absolute right-0 top-full mt-2 z-50 w-80 sm:w-96 rounded-2xl border border-border/60 bg-card shadow-2xl overflow-hidden"
                   >
                     <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -400,7 +400,7 @@ export function Topbar() {
                     initial={{ opacity: 0, y: -6, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-2 z-50 w-56 rounded-2xl border border-border/60 glass-card shadow-2xl overflow-hidden p-1.5"
+                    className="absolute right-0 top-full mt-2 z-50 w-56 rounded-2xl border border-border/60 bg-card shadow-2xl overflow-hidden p-1.5"
                   >
                     <div className="px-3 py-2.5 border-b border-border/40 mb-1">
                       <p className="text-xs font-bold text-foreground">{user?.email || "admin@ceyora.lk"}</p>
