@@ -54,17 +54,24 @@ Any other PostgreSQL 14+ provider (Supabase, Railway, RDS…) works the same way
 
    | Name | Value |
    | --- | --- |
-   | `NEXT_PUBLIC_DATA_SOURCE` | `api` |
    | `NEXT_PUBLIC_API_URL` | `https://<your-api>.vercel.app/api` |
+   | `NEXT_PUBLIC_APP_NAME` | optional, e.g. `Ceyora Tuition Management & BI` |
+   | `NEXT_PUBLIC_DEFAULT_CURRENCY` | optional, `LKR` |
+   | `NEXT_PUBLIC_DEFAULT_LOCALE` | optional, `en` |
 
 4. **Deploy.**
 5. Go back to the API project. Set `CORS_ORIGIN` to this web URL (several origins can be separated by commas, e.g. a custom domain too), then **Redeploy** the API.
 
 ## 4. First sign-in
 
-1. Open the web app. It shows **Create the Super Admin**.
-2. Enter your name, a username, a password, and the **Setup key**, which is the `SETUP_TOKEN` value.
-3. You are now the Super Admin. Under **Settings → Users & access**, generate access codes for teachers and class admins.
+> **Current state of this web app:** the login screen and most pages still use the
+> built-in demo data (`apps/web/lib/mock-data.ts`). Only the backend health
+> indicator and the bulk import call the API. Until the pages are wired to the API,
+> the deployed web app is a demo, and nothing typed into it is saved to the database.
+
+1. Open the web app and sign in with a demo account shown on the login screen.
+2. The API's own Super Admin setup (`POST /api/auth/setup` with the `X-Setup-Token`
+   header set to `SETUP_TOKEN`) is ready for when the web app is connected.
 
 ## 5. Data: start empty or load the demo
 
@@ -87,7 +94,7 @@ Push to GitHub and both projects redeploy. New database migrations (`apps/server
 ## Notes
 
 - **Demo mode without a backend:**
-  - If the web project has no `NEXT_PUBLIC_DATA_SOURCE` (or it's `mock`), every visitor gets their own demo data stored in their browser.
+  - The web app can be deployed on its own. Pages show the built-in demo data, and the backend indicator shows "offline".
   - That's fine for a public demo, but not for real use.
 - **Security:**
   - Passwords are PBKDF2-hashed.
